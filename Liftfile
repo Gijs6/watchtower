@@ -1,0 +1,4 @@
+name: watchtower
+image: gijs6/watchtower
+registry: ghcr.io
+host: dec

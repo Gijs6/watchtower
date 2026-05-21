@@ -1,0 +1,50 @@
+#!/bin/bash
+
+setup() {
+  python3 -m venv .venv
+  .venv/bin/pip install -r requirements.txt
+  npm install
+  mkdir -p static/vendor
+  cp node_modules/htmx.org/dist/htmx.min.js static/vendor/htmx.min.js
+}
+
+serve() {
+  .venv/bin/python app.py
+}
+
+build() {
+  npm run build:css
+}
+
+deploy() {
+  build
+  lift deploy
+}
+
+format() {
+  ruff format .
+  prettier --write "**/*.{css,js}"
+  djlint . --reformat
+}
+
+genpass() {
+  python3 -c "from werkzeug.security import generate_password_hash; import sys; print(generate_password_hash(sys.argv[1]))" "$1"
+}
+
+publish() {
+  if ! git diff-index --quiet HEAD --; then
+    git stash push -m "bake-publish"
+    STASHED=1
+  else
+    STASHED=0
+  fi
+
+  format || true
+  git commit -a -m "Format repo" || true
+
+  if [ "$STASHED" -eq 1 ]; then
+    git stash pop
+  fi
+
+  git push & deploy & wait
+}

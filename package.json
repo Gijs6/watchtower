@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "build:css": "lightningcss --bundle --minify --browserslist static/styles/main.css -o static/styles/main.min.css"
+  },
+  "dependencies": {
+    "htmx.org": "^2.0.4"
+  },
+  "devDependencies": {
+    "lightningcss-cli": "^1"
+  }
+}
