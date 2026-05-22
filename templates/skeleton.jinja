@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>
+            {%- block title -%}{%- endblock %} - Watchtower
+        </title>
+
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+        {% if config.DEBUG %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/skeleton.css') }}" />
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/colors.css') }}" />
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/theming.css') }}" />
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/base.css') }}" />
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/auth.css') }}" />
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/watcher.css') }}" />
+        {% else %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.min.css') }}" />
+        {% endif %}
+
+        <script src="https://kit.fontawesome.com/4a94c21782.js" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='vendor/htmx.min.js') }}" defer></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+            rel="stylesheet"
+        />
+
+        {% block extra_headers %}{% endblock %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}">
+        <div class="messages" aria-live="polite" aria-atomic="false">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-list">
+                        {% for category, message in messages %}
+                            <li class="flash is-{{ category }}">
+                                {% if category == "success" %}
+                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                                {% elif category == "error" %}
+                                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                                {% elif category == "info" %}
+                                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                {% endif %}
+                                {{ message }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {% block body_content %}{% endblock %}
+    </body>
+</html>

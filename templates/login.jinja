@@ -1,0 +1,38 @@
+{% extends "skeleton.jinja" %}
+
+{% block title %}Sign in{% endblock %}
+{% block body_class %}module-auth{% endblock %}
+
+{% block body_content %}
+    <main class="auth-main">
+        <span class="wordmark">
+            <i class="fa-solid fa-tower-observation" aria-hidden="true"></i> Watchtower
+        </span>
+
+        <section class="auth-panel">
+            <h1>
+                <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Sign in
+            </h1>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="field">
+                    <label for="password">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i> Password
+                    </label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        autofocus
+                        autocomplete="current-password"
+                    />
+                </div>
+                <button type="submit">
+                    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Sign in
+                </button>
+            </form>
+        </section>
+
+        <p class="app-info">Watchtower</p>
+    </main>
+{% endblock %}

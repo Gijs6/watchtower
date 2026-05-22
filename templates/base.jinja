@@ -1,0 +1,40 @@
+{% extends "skeleton.jinja" %}
+
+{% macro nav_item(endpoint, name) %}
+    <a href="{{ url_for(endpoint) }}" class="nav-item{% if request.endpoint == endpoint %} is-active{% endif %}">
+        {{ name | safe }}
+    </a>
+{% endmacro %}
+
+{% block body_content %}
+    <header class="page-header">
+        <a href="{{ url_for('index') }}" class="wordmark">
+            <i class="fa-solid fa-tower-observation" aria-hidden="true"></i> Watchtower
+        </a>
+    </header>
+
+    <div class="page-layout">
+        <aside class="page-sidebar">
+            <nav class="sidebar-nav" aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li class="nav-entry">
+                        {{ nav_item("watcher.index", '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
+                    </li>
+                    <li class="nav-entry">
+                        {{ nav_item("watcher.settings", '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings') }}
+                    </li>
+                </ul>
+            </nav>
+
+            <form method="post" action="{{ url_for('logout') }}">
+                <button type="submit" class="logout-button">
+                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign out
+                </button>
+            </form>
+        </aside>
+
+        <main class="page-main">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}

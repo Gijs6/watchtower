@@ -1,0 +1,65 @@
+<div id="sites-island" class="island-content">
+    {% if not sites %}
+        <p class="is-empty">No sites yet. Add one with the button above.</p>
+    {% else %}
+        <ul class="site-grid">
+            {% for site in sites %}
+                {% set snap = latest[site.id] %}
+
+                {% if not site.is_active %}
+                    {% set status = "paused" %}
+                {% elif snap is none %}
+                    {% set status = "pending" %}
+                {% elif snap.error %}
+                    {% set status = "error" %}
+                {% elif snap.changed %}
+                    {% set status = "changed" %}
+                {% else %}
+                    {% set status = "ok" %}
+                {% endif %}
+
+                <li class="site-card is-{{ status }}">
+                    <div class="site-card-header">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}" class="site-name">
+                            {{ site.name }}
+                        </a>
+                    </div>
+
+                    <a
+                        href="{{ site.url }}"
+                        class="site-url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >{{ site.url }}</a>
+
+                    <dl class="site-meta">
+                        <div class="site-meta-item">
+                            <dt>Checked</dt>
+                            <dd>{{ site.last_checked_at | timeago }}</dd>
+                        </div>
+                        <div class="site-meta-item">
+                            <dt>Changed</dt>
+                            <dd>{{ site.last_changed_at | timeago }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="site-card-actions">
+                        <form method="post" action="{{ url_for('watcher.toggle', site_id=site.id) }}">
+                            <button type="submit" class="ghost sm">
+                                {% if site.is_active %}
+                                    <i class="fa-solid fa-pause" aria-hidden="true"></i> Pause
+                                {% else %}
+                                    <i class="fa-solid fa-play" aria-hidden="true"></i> Resume
+                                {% endif %}
+                            </button>
+                        </form>
+                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}" class="button ghost sm">
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i> Detail
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
