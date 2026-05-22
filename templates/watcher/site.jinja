@@ -99,7 +99,11 @@
                             <p class="check-history__error-msg">{{ snap.error }}</p>
                         {% elif snap.changed and snap.diff_snippet %}
                             <details class="diff-view">
-                                <summary class="diff-view__toggle">Show diff</summary>
+                                <summary class="diff-view__toggle">
+                                    <i class="fa-solid fa-fw fa-chevron-right diff-view__toggle-icon--closed"
+                                       aria-hidden="true"></i><i class="fa-solid fa-fw fa-chevron-down diff-view__toggle-icon--open"
+   aria-hidden="true"></i> Show diff
+                                </summary>
                                 <pre class="diff-view__code">{{ snap.diff_snippet | diff_html }}</pre>
                             </details>
                         {% endif %}

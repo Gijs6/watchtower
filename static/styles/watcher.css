@@ -266,10 +266,28 @@
         color: var(--color-gray-6);
         cursor: pointer;
         user-select: none;
+        list-style: none;
+
+        .diff-view__toggle-icon--open {
+            display: none;
+        }
 
         &:hover {
-            color: var(--color-fg);
-            background: var(--color-gray-0);
+            color: var(--color-accent);
+        }
+    }
+
+    &[open] {
+        background: var(--color-gray-0);
+    }
+
+    &[open] .diff-view__toggle {
+        .diff-view__toggle-icon--closed {
+            display: none;
+        }
+
+        .diff-view__toggle-icon--open {
+            display: inline-block;
         }
     }
 
