@@ -48,16 +48,25 @@ def island():
     )
 
 
+@watcher_bp.get("/sites/add")
+def add_site():
+    return render_template("watcher/add_site.jinja")
+
+
 @watcher_bp.post("/sites")
 def add():
     name = request.form.get("name", "").strip()
     url = request.form.get("url", "").strip()
     interval = request.form.get("check_interval", "300").strip()
-    if not name or not url:
-        flash("Name and URL are required.", "error")
-        return redirect(url_for("watcher.index"))
+    if not url:
+        flash("URL is required.", "error")
+        return render_template(
+            "watcher/add_site.jinja", name=name, url=url, interval=interval
+        )
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
+    if not name:
+        name = url.removeprefix("https://").removeprefix("http://")
     try:
         interval = max(60, int(interval))
     except ValueError:
