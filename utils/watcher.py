@@ -50,9 +50,11 @@ def fetch_page(url):
             timeout=15,
             headers={"User-Agent": "Watchtower/1.0 change-monitor"},
         )
-        return resp.text, None
+        content_type = resp.headers.get("Content-Type", "")
+        is_text = content_type.startswith("text/")
+        return resp.text, is_text, None
     except Exception as e:
-        return None, str(e)[:200]
+        return None, False, str(e)[:200]
 
 
 def compute_hash(text):
@@ -60,9 +62,9 @@ def compute_hash(text):
 
 
 def compute_diff_snippet(old_text, new_text, max_lines=15):
-    old_lines = old_text.splitlines(keepends=True)
-    new_lines = new_text.splitlines(keepends=True)
-    diff = list(difflib.unified_diff(old_lines, new_lines, lineterm="", n=2))
+    old_lines = old_text.splitlines()
+    new_lines = new_text.splitlines()
+    diff = list(difflib.unified_diff(old_lines, new_lines, n=2))
     diff = diff[2:] if len(diff) > 2 else diff
     snippet_lines = []
     for line in diff:
@@ -75,7 +77,7 @@ def compute_diff_snippet(old_text, new_text, max_lines=15):
 
 def do_check(site):
     now = datetime.now(timezone.utc)
-    html_content, error = fetch_page(site.url)
+    html_content, is_text, error = fetch_page(site.url)
 
     if error:
         db.session.add(
@@ -93,7 +95,7 @@ def do_check(site):
         db.session.commit()
         return
 
-    text = extract_text(html_content)[:CONTENT_MAX_LEN]
+    text = extract_text(html_content)[:CONTENT_MAX_LEN] if is_text else html_content[:CONTENT_MAX_LEN]
     content_hash = compute_hash(text)
 
     prev = (
@@ -105,7 +107,9 @@ def do_check(site):
 
     changed = prev is not None and prev.content_hash != content_hash
     diff_snippet = (
-        compute_diff_snippet(prev.content, text) if changed and prev.content else None
+        compute_diff_snippet(prev.content, text) if changed and prev.content and is_text
+        else "Diff not available." if changed
+        else None
     )
 
     db.session.add(
