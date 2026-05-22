@@ -91,6 +91,37 @@
     }
 }
 
+.site-timeline {
+    display: flex;
+    gap: 2px;
+    height: 1.25rem;
+}
+
+.tl-block {
+    flex: 1;
+    border-radius: 2px;
+
+    &.tl-empty {
+        background: var(--color-gray-2);
+    }
+
+    &.tl-0 {
+        background: var(--color-green-4);
+    }
+
+    &.tl-1 {
+        background: var(--color-yellow-4);
+    }
+
+    &.tl-2 {
+        background: var(--color-orange-4);
+    }
+
+    &.tl-3 {
+        background: var(--color-red-5);
+    }
+}
+
 .site-meta {
     display: grid;
     grid-template-columns: 1fr 1fr;

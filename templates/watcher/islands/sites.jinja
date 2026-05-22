@@ -30,6 +30,24 @@
                        target="_blank"
                        rel="noopener noreferrer">{{ site.url }}</a>
 
+                    <div class="site-timeline" aria-label="Last 24 hours">
+                        {% for bucket in timeline[site.id] %}
+                            {% if bucket is none %}
+                                {% set lvl = "empty" %}
+                            {% elif bucket == 0 %}
+                                {% set lvl = "0" %}
+                            {% elif bucket == 1 %}
+                                {% set lvl = "1" %}
+                            {% elif bucket == 2 %}
+                                {% set lvl = "2" %}
+                            {% else %}
+                                {% set lvl = "3" %}
+                            {% endif %}
+                            <span class="tl-block tl-{{ lvl }}"
+                                  title="{{ bucket if bucket is not none else 'no data' }} change{{ 's' if bucket != 1 else '' }}"></span>
+                        {% endfor %}
+                    </div>
+
                     <dl class="site-meta">
                         <div class="site-meta-item">
                             <dt>Checked</dt>

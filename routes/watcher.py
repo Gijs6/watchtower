@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from models import Site, Snapshot, db
@@ -21,7 +23,29 @@ def island():
         .first()
         for site in sites
     }
-    return render_template("watcher/islands/sites.jinja", sites=sites, latest=latest)
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=24)
+    timeline = {}
+    for site in sites:
+        buckets = [None] * 24
+        snaps = Snapshot.query.filter(
+            Snapshot.site_id == site.id,
+            Snapshot.captured_at >= cutoff,
+        ).all()
+        for snap in snaps:
+            ts = snap.captured_at
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            bucket = 23 - int((now - ts).total_seconds() / 3600)
+            if 0 <= bucket < 24:
+                if buckets[bucket] is None:
+                    buckets[bucket] = 0
+                if snap.changed:
+                    buckets[bucket] += 1
+        timeline[site.id] = buckets
+    return render_template(
+        "watcher/islands/sites.jinja", sites=sites, latest=latest, timeline=timeline
+    )
 
 
 @watcher_bp.post("/sites")
