@@ -114,16 +114,39 @@ def update(site_id):
     return redirect(url_for("watcher.detail", site_id=site.id))
 
 
+def _squash_snapshots(snapshots):
+    def is_squashable(s):
+        return not s.changed
+
+    result = []
+    i = 0
+    while i < len(snapshots):
+        snap = snapshots[i]
+        if is_squashable(snap):
+            count = 1
+            while i + count < len(snapshots) and is_squashable(snapshots[i + count]):
+                count += 1
+            oldest = snapshots[i + count - 1]
+            result.append((snap, count, oldest))
+            i += count
+        else:
+            result.append((snap, 1, snap))
+            i += 1
+    return result
+
+
 @watcher_bp.get("/sites/<site_id>")
 def detail(site_id):
     site = db.get_or_404(Site, site_id)
     snapshots = (
         Snapshot.query.filter_by(site_id=site.id)
         .order_by(Snapshot.captured_at.desc())
-        .limit(50)
+        .limit(200)
         .all()
     )
-    return render_template("watcher/site.jinja", site=site, snapshots=snapshots)
+    return render_template(
+        "watcher/site.jinja", site=site, snapshots=_squash_snapshots(snapshots)
+    )
 
 
 @watcher_bp.get("/settings")

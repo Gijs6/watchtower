@@ -203,6 +203,11 @@
         font-family: var(--font-family-mono);
     }
 
+    .check-history__time-sep {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-5);
+    }
+
     .check-history__badge {
         margin-left: auto;
         font-size: var(--font-size-xs);

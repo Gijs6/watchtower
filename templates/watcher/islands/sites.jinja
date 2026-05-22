@@ -51,13 +51,13 @@
                                 {% set time_label = h_near ~ "-" ~ h_far ~ "h ago" %}
                             {% endif %}
                             {% if bucket is none %}
-                                {% set tip = "No data · " ~ time_label %}
+                                {% set tip = "No data - " ~ time_label %}
                             {% elif bucket == 0 %}
-                                {% set tip = "No changes · " ~ time_label %}
+                                {% set tip = "No changes - " ~ time_label %}
                             {% elif bucket == 1 %}
-                                {% set tip = "1 change · " ~ time_label %}
+                                {% set tip = "1 change - " ~ time_label %}
                             {% else %}
-                                {% set tip = bucket ~ " changes · " ~ time_label %}
+                                {% set tip = bucket ~ " changes - " ~ time_label %}
                             {% endif %}
                             <span class="tl-bar tl-bar--{{ lvl }}" data-tooltip="{{ tip }}"></span>
                         {% endfor %}
