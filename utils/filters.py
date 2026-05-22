@@ -45,15 +45,39 @@ def diff_html_filter(diff_text):
         return Markup("")
     parts = []
     for line in diff_text.splitlines():
-        escaped = html_module.escape(line)
         if line.startswith("+"):
-            parts.append(f'<span class="diff-view__line--added">{escaped}</span>')
+            gutter = "+"
+            content = html_module.escape(line[1:])
+            parts.append(
+                f'<span class="diff-line diff-line--added">'
+                f'<span class="diff-line__gutter">{gutter}</span>'
+                f'<span class="diff-line__content">{content}</span>'
+                f"</span>"
+            )
         elif line.startswith("-"):
-            parts.append(f'<span class="diff-view__line--removed">{escaped}</span>')
+            gutter = "-"
+            content = html_module.escape(line[1:])
+            parts.append(
+                f'<span class="diff-line diff-line--removed">'
+                f'<span class="diff-line__gutter">{gutter}</span>'
+                f'<span class="diff-line__content">{content}</span>'
+                f"</span>"
+            )
         elif line.startswith("@"):
-            parts.append(f'<span class="diff-view__line--hunk">{escaped}</span>')
+            content = html_module.escape(line)
+            parts.append(f'<span class="diff-line diff-line--hunk">{content}</span>')
+        elif line.startswith("\\ "):
+            content = html_module.escape(line)
+            parts.append(f'<span class="diff-line diff-line--truncated">{content}</span>')
         else:
-            parts.append(f'<span class="diff-view__line--context">{escaped}</span>')
+            gutter = " "
+            content = html_module.escape(line[1:] if line.startswith(" ") else line)
+            parts.append(
+                f'<span class="diff-line diff-line--context">'
+                f'<span class="diff-line__gutter">{gutter}</span>'
+                f'<span class="diff-line__content">{content}</span>'
+                f"</span>"
+            )
     return Markup("\n".join(parts))
 
 

@@ -61,18 +61,20 @@ def compute_hash(text):
     return hashlib.sha256(text.encode("utf-8", errors="replace")).hexdigest()
 
 
-def compute_diff_snippet(old_text, new_text, max_lines=15):
+def compute_diff_snippet(old_text, new_text, max_lines=50):
     old_lines = old_text.splitlines()
     new_lines = new_text.splitlines()
-    diff = list(difflib.unified_diff(old_lines, new_lines, n=2))
+    diff = list(difflib.unified_diff(old_lines, new_lines, n=3))
     diff = diff[2:] if len(diff) > 2 else diff
-    snippet_lines = []
+    if not diff:
+        return None
+    snippet = []
     for line in diff:
-        if line.startswith(("+", "-", "@")):
-            snippet_lines.append(line)
-        if len(snippet_lines) >= max_lines:
+        snippet.append(line.rstrip("\n"))
+        if len(snippet) >= max_lines:
+            snippet.append("\\ ...")
             break
-    return "".join(snippet_lines)[:1000]
+    return "\n".join(snippet)
 
 
 def do_check(site):

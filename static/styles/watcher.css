@@ -311,31 +311,52 @@
 
     .diff-view__code {
         margin: 0;
-        padding: var(--spacing-sm) var(--spacing-md);
+        padding: var(--spacing-xs) 0;
+        overflow-x: auto;
         background: var(--color-gray-0);
         font-size: var(--font-size-xs);
         line-height: 1.6;
 
-        .diff-view__line--added {
-            display: block;
+        .diff-line {
+            display: flex;
+            align-items: baseline;
+            padding: 0 var(--spacing-md);
+            white-space: pre;
+
+            .diff-line__gutter {
+                flex: 0 0 1.25em;
+                user-select: none;
+                opacity: 0.5;
+            }
+
+            .diff-line__content {
+                flex: 1;
+            }
+        }
+
+        .diff-line--added {
             background: var(--color-green-0);
             color: var(--color-green-8);
         }
 
-        .diff-view__line--removed {
-            display: block;
+        .diff-line--removed {
             background: var(--color-red-0);
             color: var(--color-red-8);
         }
 
-        .diff-view__line--hunk {
-            display: block;
+        .diff-line--hunk {
             color: var(--color-blue-6);
+            padding-top: var(--spacing-xs);
+            padding-bottom: var(--spacing-xs);
         }
 
-        .diff-view__line--context {
-            display: block;
+        .diff-line--context {
             color: var(--color-gray-6);
+        }
+
+        .diff-line--truncated {
+            color: var(--color-gray-5);
+            font-style: italic;
         }
     }
 }
