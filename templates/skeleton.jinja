@@ -61,5 +61,24 @@
         </div>
 
         {% block body_content %}{% endblock %}
+
+        <script>
+            function timeago(dt) {
+                const s = Math.floor((Date.now() - dt) / 1000);
+                if (s < 60) return s + 's ago';
+                if (s < 3600) return Math.floor(s / 60) + 'm ago';
+                if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+                return Math.floor(s / 86400) + 'd ago';
+            }
+            function updateLiveTimes() {
+                document.querySelectorAll('time[data-live]').forEach(function(el) {
+                    const dt = new Date(el.getAttribute('datetime'));
+                    if (!isNaN(dt)) el.textContent = timeago(dt);
+                });
+            }
+            updateLiveTimes();
+            setInterval(updateLiveTimes, 1000);
+            document.addEventListener('htmx:afterSettle', updateLiveTimes);
+        </script>
     </body>
 </html>

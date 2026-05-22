@@ -67,13 +67,13 @@
                         <div class="watch-card__meta-item">
                             <dt>Checked</dt>
                             <dd>
-                                {{ site.last_checked_at | timeago }}
+                                <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>
                             </dd>
                         </div>
                         <div class="watch-card__meta-item">
                             <dt>Changed</dt>
                             <dd>
-                                {{ site.last_changed_at | timeago }}
+                                <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
                             </dd>
                         </div>
                     </dl>
