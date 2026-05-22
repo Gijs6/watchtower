@@ -62,6 +62,12 @@ def logout():
     return redirect(url_for("login"))
 
 
+@app.context_processor
+def inject_globals():
+    from utils.watcher import get_setting
+    return {"discord_webhook_set": bool(get_setting("discord_webhook", ""))}
+
+
 @app.before_request
 def require_login():
     allowed = {"login", "logout", "static"}

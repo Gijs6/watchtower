@@ -43,8 +43,23 @@
                             {% else %}
                                 {% set lvl = "lvl-3" %}
                             {% endif %}
-                            <span class="tl-bar tl-bar--{{ lvl }}"
-                                  title="{{ bucket if bucket is not none else 'no data' }} change{{ 's' if bucket != 1 else '' }}"></span>
+                            {% set h_near = 23 - loop.index0 %}
+                            {% set h_far = 24 - loop.index0 %}
+                            {% if h_near == 0 %}
+                                {% set time_label = "last hour" %}
+                            {% else %}
+                                {% set time_label = h_near ~ "-" ~ h_far ~ "h ago" %}
+                            {% endif %}
+                            {% if bucket is none %}
+                                {% set tip = "No data · " ~ time_label %}
+                            {% elif bucket == 0 %}
+                                {% set tip = "No changes · " ~ time_label %}
+                            {% elif bucket == 1 %}
+                                {% set tip = "1 change · " ~ time_label %}
+                            {% else %}
+                                {% set tip = bucket ~ " changes · " ~ time_label %}
+                            {% endif %}
+                            <span class="tl-bar tl-bar--{{ lvl }}" data-tooltip="{{ tip }}"></span>
                         {% endfor %}
                     </div>
 
