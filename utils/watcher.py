@@ -95,7 +95,11 @@ def do_check(site):
         db.session.commit()
         return
 
-    text = extract_text(html_content)[:CONTENT_MAX_LEN] if is_text else html_content[:CONTENT_MAX_LEN]
+    text = (
+        extract_text(html_content)[:CONTENT_MAX_LEN]
+        if is_text
+        else html_content[:CONTENT_MAX_LEN]
+    )
     content_hash = compute_hash(text)
 
     prev = (
@@ -107,8 +111,10 @@ def do_check(site):
 
     changed = prev is not None and prev.content_hash != content_hash
     diff_snippet = (
-        compute_diff_snippet(prev.content, text) if changed and prev.content and is_text
-        else "Diff not available." if changed
+        compute_diff_snippet(prev.content, text)
+        if changed and prev.content and is_text
+        else "Diff not available."
+        if changed
         else None
     )
 
