@@ -1,9 +1,8 @@
 {% extends "skeleton.jinja" %}
 
 {% macro nav_item(endpoint, name) %}
-    <a href="{{ url_for(endpoint) }}" class="nav-item{% if request.endpoint == endpoint %} is-active{% endif %}">
-        {{ name | safe }}
-    </a>
+    <a href="{{ url_for(endpoint) }}"
+       class="nav-item{% if request.endpoint == endpoint %} is-active{% endif %}">{{ name | safe }}</a>
 {% endmacro %}
 
 {% block body_content %}
@@ -18,10 +17,10 @@
             <nav class="sidebar-nav" aria-label="Main navigation">
                 <ul class="nav-list">
                     <li class="nav-entry">
-                        {{ nav_item("watcher.index", '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
+                        {{ nav_item('watcher.index', '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
                     </li>
                     <li class="nav-entry">
-                        {{ nav_item("watcher.settings", '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings') }}
+                        {{ nav_item('watcher.settings', '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings') }}
                     </li>
                 </ul>
             </nav>

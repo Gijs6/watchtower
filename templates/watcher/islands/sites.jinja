@@ -21,31 +21,33 @@
                 <li class="site-card is-{{ status }}">
                     <div class="site-card-header">
                         <span class="status-dot" aria-hidden="true"></span>
-                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}" class="site-name">
-                            {{ site.name }}
-                        </a>
+                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
+                           class="site-name">{{ site.name }}</a>
                     </div>
 
-                    <a
-                        href="{{ site.url }}"
-                        class="site-url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >{{ site.url }}</a>
+                    <a href="{{ site.url }}"
+                       class="site-url"
+                       target="_blank"
+                       rel="noopener noreferrer">{{ site.url }}</a>
 
                     <dl class="site-meta">
                         <div class="site-meta-item">
                             <dt>Checked</dt>
-                            <dd>{{ site.last_checked_at | timeago }}</dd>
+                            <dd>
+                                {{ site.last_checked_at | timeago }}
+                            </dd>
                         </div>
                         <div class="site-meta-item">
                             <dt>Changed</dt>
-                            <dd>{{ site.last_changed_at | timeago }}</dd>
+                            <dd>
+                                {{ site.last_changed_at | timeago }}
+                            </dd>
                         </div>
                     </dl>
 
                     <div class="site-card-actions">
-                        <form method="post" action="{{ url_for('watcher.toggle', site_id=site.id) }}">
+                        <form method="post"
+                              action="{{ url_for('watcher.toggle', site_id=site.id) }}">
                             <button type="submit" class="ghost sm">
                                 {% if site.is_active %}
                                     <i class="fa-solid fa-pause" aria-hidden="true"></i> Pause
@@ -54,7 +56,8 @@
                                 {% endif %}
                             </button>
                         </form>
-                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}" class="button ghost sm">
+                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
+                           class="button ghost sm">
                             <i class="fa-solid fa-arrow-right" aria-hidden="true"></i> Detail
                         </a>
                     </div>

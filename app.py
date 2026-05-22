@@ -15,9 +15,7 @@ load_dotenv(override=True)
 app = Flask(__name__)
 
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(100).hex())
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DB_URI", "sqlite:///watchtower.db"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", "sqlite:///watchtower.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)

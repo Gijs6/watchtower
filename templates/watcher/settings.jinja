@@ -4,25 +4,25 @@
 
 {% block content %}
     <div class="page-heading">
-        <h1><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</h1>
+        <h1>
+            <i class="fa-solid fa-gear" aria-hidden="true"></i> Settings
+        </h1>
     </div>
 
     <section class="settings-card">
         <h2>Notifications</h2>
-        <form method="post" action="{{ url_for('watcher.settings_save') }}" class="settings-form">
+        <form method="post"
+              action="{{ url_for('watcher.settings_save') }}"
+              class="settings-form">
             <div class="settings-fields">
                 <div class="field">
                     <label for="discord_webhook">Discord webhook URL</label>
-                    <input
-                        type="url"
-                        id="discord_webhook"
-                        name="discord_webhook"
-                        value="{{ webhook }}"
-                        placeholder="https://discord.com/api/webhooks/..."
-                    />
-                    <p class="field-hint">
-                        Watchtower will send a message to this webhook when a monitored page changes.
-                    </p>
+                    <input type="url"
+                           id="discord_webhook"
+                           name="discord_webhook"
+                           value="{{ webhook }}"
+                           placeholder="https://discord.com/api/webhooks/..." />
+                    <p class="field-hint">Watchtower will send a message to this webhook when a monitored page changes.</p>
                 </div>
             </div>
             <div class="form-actions">

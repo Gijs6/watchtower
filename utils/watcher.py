@@ -78,15 +78,17 @@ def do_check(site):
     html_content, error = fetch_page(site.url)
 
     if error:
-        db.session.add(Snapshot(
-            site_id=site.id,
-            captured_at=now,
-            content_hash="",
-            content=None,
-            changed=False,
-            diff_snippet=None,
-            error=error,
-        ))
+        db.session.add(
+            Snapshot(
+                site_id=site.id,
+                captured_at=now,
+                content_hash="",
+                content=None,
+                changed=False,
+                diff_snippet=None,
+                error=error,
+            )
+        )
         site.last_checked_at = now
         db.session.commit()
         return
@@ -102,17 +104,21 @@ def do_check(site):
     )
 
     changed = prev is not None and prev.content_hash != content_hash
-    diff_snippet = compute_diff_snippet(prev.content, text) if changed and prev.content else None
+    diff_snippet = (
+        compute_diff_snippet(prev.content, text) if changed and prev.content else None
+    )
 
-    db.session.add(Snapshot(
-        site_id=site.id,
-        captured_at=now,
-        content_hash=content_hash,
-        content=text,
-        changed=changed,
-        diff_snippet=diff_snippet,
-        error=None,
-    ))
+    db.session.add(
+        Snapshot(
+            site_id=site.id,
+            captured_at=now,
+            content_hash=content_hash,
+            content=text,
+            changed=changed,
+            diff_snippet=diff_snippet,
+            error=None,
+        )
+    )
     site.last_checked_at = now
     if changed:
         site.last_changed_at = now
@@ -132,6 +138,7 @@ def do_check(site):
         webhook_url = get_setting("discord_webhook")
         if webhook_url:
             from utils.discord import send_notification
+
             send_notification(webhook_url, site, now, diff_snippet)
 
 
@@ -149,7 +156,10 @@ def run_worker(app):
                     last_at = last.captured_at if last else None
                     if last_at is not None and last_at.tzinfo is None:
                         last_at = last_at.replace(tzinfo=timezone.utc)
-                    if last_at is None or (now - last_at).total_seconds() >= site.check_interval:
+                    if (
+                        last_at is None
+                        or (now - last_at).total_seconds() >= site.check_interval
+                    ):
                         do_check(site)
         except Exception as e:
             print(f"Worker error: {e}")
@@ -160,5 +170,7 @@ def start_worker(app):
     global worker_thread
     with worker_lock:
         if worker_thread is None or not worker_thread.is_alive():
-            worker_thread = threading.Thread(target=run_worker, args=(app,), daemon=True)
+            worker_thread = threading.Thread(
+                target=run_worker, args=(app,), daemon=True
+            )
             worker_thread.start()

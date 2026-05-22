@@ -18,11 +18,13 @@ def send_notification(webhook_url, site, detected_at, diff_snippet):
 
     if diff_snippet:
         snippet = diff_snippet[:900]
-        embed["fields"].append({
-            "name": "Changes",
-            "value": f"```diff\n{snippet}\n```",
-            "inline": False,
-        })
+        embed["fields"].append(
+            {
+                "name": "Changes",
+                "value": f"```diff\n{snippet}\n```",
+                "inline": False,
+            }
+        )
 
     try:
         requests.post(webhook_url, json={"embeds": [embed]}, timeout=10)

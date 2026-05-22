@@ -4,7 +4,9 @@
 
 {% block content %}
     <div class="page-heading">
-        <h1><i class="fa-solid fa-home" aria-hidden="true"></i> Dashboard</h1>
+        <h1>
+            <i class="fa-solid fa-home" aria-hidden="true"></i> Dashboard
+        </h1>
         <div class="actions">
             <button type="button" id="open-add-site">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> Add site
@@ -12,33 +14,47 @@
         </div>
     </div>
 
-    <div
-        id="sites-island"
-        class="island"
-        hx-get="{{ url_for('watcher.island') }}"
-        hx-trigger="load, every 30s"
-        hx-swap="outerHTML"
-    ></div>
+    <div id="sites-island"
+         class="island"
+         hx-get="{{ url_for('watcher.island') }}"
+         hx-trigger="load, every 30s"
+         hx-swap="outerHTML"></div>
 
     <dialog id="add-site-dialog" aria-labelledby="add-site-heading">
         <div class="dialog-header">
             <h2 id="add-site-heading">Add site</h2>
-            <button type="button" class="icon-button" id="close-add-site" aria-label="Close">
+            <button type="button"
+                    class="icon-button"
+                    id="close-add-site"
+                    aria-label="Close">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
         </div>
         <form method="post" action="{{ url_for('watcher.add') }}">
             <div class="field">
                 <label for="site-name">Name</label>
-                <input type="text" id="site-name" name="name" placeholder="My Website" required />
+                <input type="text"
+                       id="site-name"
+                       name="name"
+                       placeholder="My Website"
+                       required />
             </div>
             <div class="field">
                 <label for="site-url">URL</label>
-                <input type="url" id="site-url" name="url" placeholder="https://example.com" required />
+                <input type="url"
+                       id="site-url"
+                       name="url"
+                       placeholder="https://example.com"
+                       required />
             </div>
             <div class="field">
                 <label for="site-interval">Check interval (seconds)</label>
-                <input type="number" id="site-interval" name="check_interval" value="300" min="60" max="86400" />
+                <input type="number"
+                       id="site-interval"
+                       name="check_interval"
+                       value="300"
+                       min="60"
+                       max="86400" />
             </div>
             <button type="submit">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> Add
@@ -47,7 +63,7 @@
     </dialog>
 
     <script>
-        (function () {
+        (function() {
             const dialog = document.getElementById("add-site-dialog");
             document.getElementById("open-add-site").addEventListener("click", () => dialog.showModal());
             document.getElementById("close-add-site").addEventListener("click", () => dialog.close());
