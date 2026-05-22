@@ -64,9 +64,32 @@ def logout():
 
 @app.context_processor
 def inject_globals():
+    from datetime import datetime, timezone
+
+    from models import Snapshot
     from utils.watcher import get_setting
 
-    return {"discord_webhook_set": bool(get_setting("discord_webhook", ""))}
+    webhook_set = bool(get_setting("discord_webhook", ""))
+
+    last_seen_str = get_setting("notifications_last_seen")
+    if last_seen_str:
+        try:
+            last_seen = datetime.fromisoformat(last_seen_str)
+            if last_seen.tzinfo is None:
+                last_seen = last_seen.replace(tzinfo=timezone.utc)
+            notification_count = Snapshot.query.filter(
+                Snapshot.changed == True,
+                Snapshot.captured_at > last_seen,
+            ).count()
+        except Exception:
+            notification_count = 0
+    else:
+        notification_count = Snapshot.query.filter(Snapshot.changed == True).count()
+
+    return {
+        "discord_webhook_set": webhook_set,
+        "notification_count": notification_count,
+    }
 
 
 @app.before_request

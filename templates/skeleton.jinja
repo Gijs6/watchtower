@@ -70,6 +70,7 @@
                 if (s < 86400) return Math.floor(s / 3600) + 'h ago';
                 return Math.floor(s / 86400) + 'd ago';
             }
+
             function updateLiveTimes() {
                 document.querySelectorAll('time[data-live]').forEach(function(el) {
                     const dt = new Date(el.getAttribute('datetime'));

@@ -163,6 +163,24 @@
     }
 }
 
+.notif-time {
+    margin-left: auto;
+}
+
+.notif-site-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-fg);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+
+    &:hover {
+        color: var(--color-accent);
+    }
+}
+
 .check-history {
     > h2 {
         margin: 0 0 var(--spacing-md) 0;

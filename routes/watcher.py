@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from models import Site, Snapshot, db
+from sqlalchemy.orm import joinedload
 from utils.watcher import get_setting, set_setting
 
 
@@ -147,6 +148,20 @@ def detail(site_id):
     return render_template(
         "watcher/site.jinja", site=site, snapshots=_squash_snapshots(snapshots)
     )
+
+
+@watcher_bp.get("/notifications")
+def notifications():
+    now = datetime.now(timezone.utc)
+    set_setting("notifications_last_seen", now.isoformat())
+    events = (
+        Snapshot.query.options(joinedload(Snapshot.site))
+        .filter(Snapshot.changed == True)
+        .order_by(Snapshot.captured_at.desc())
+        .limit(50)
+        .all()
+    )
+    return render_template("watcher/notifications.jinja", events=events)
 
 
 @watcher_bp.get("/settings")

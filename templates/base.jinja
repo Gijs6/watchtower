@@ -20,6 +20,10 @@
                         {{ nav_item('watcher.index', '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
                     </li>
                     <li class="app-nav__item">
+                        {{ nav_item('watcher.notifications', '<i class="fa-solid fa-fw fa-bell" aria-hidden="true"></i> Notifications' + (' <span class="app-nav__badge"
+                               aria-label="' + notification_count|string + ' unread">' + notification_count|string + '</span>' if notification_count > 0 else '') ) }}
+                    </li>
+                    <li class="app-nav__item">
                         {{ nav_item('watcher.settings', '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings' + ('' if discord_webhook_set else ' <span class="app-nav__warning"
                                data-tooltip="No Discord webhook set - notifications won\'t be sent"
                                data-tooltip-position="right"><i class="fa-solid fa-triangle-exclamation"
