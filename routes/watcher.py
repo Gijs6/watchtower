@@ -68,7 +68,7 @@ def add():
     if not name:
         name = url.removeprefix("https://").removeprefix("http://")
     try:
-        interval = max(60, int(interval))
+        interval = max(10, int(interval))
     except ValueError:
         interval = 300
     db.session.add(Site(name=name, url=url, check_interval=interval))
@@ -106,7 +106,7 @@ def update(site_id):
     if url:
         site.url = url
     try:
-        site.check_interval = max(60, int(interval))
+        site.check_interval = max(10, int(interval))
     except ValueError:
         pass
     db.session.commit()
