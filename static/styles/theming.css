@@ -1,0 +1,210 @@
+a {
+    color: var(--color-accent-dark);
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+button,
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+    color: var(--color-white);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    border-radius: var(--radius);
+    background: var(--color-accent);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--color-accent-dark);
+    }
+
+    &.danger {
+        background: var(--color-red-7);
+
+        &:hover {
+            background: var(--color-red-9);
+        }
+    }
+
+    &.ghost {
+        background: transparent;
+        color: var(--color-gray-7);
+        border: 1px solid var(--color-border);
+
+        &:hover {
+            background: var(--color-gray-1);
+            color: var(--color-fg);
+        }
+    }
+
+    &.sm {
+        padding: var(--spacing-2xs) var(--spacing-xs);
+        font-size: var(--font-size-sm);
+    }
+}
+
+input,
+select,
+textarea {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-accent);
+    }
+}
+
+label {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--color-accent);
+    color: var(--color-white);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--color-accent);
+}
+
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+
+    legend {
+        padding: 0;
+    }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: fit-content;
+
+    > button {
+        margin-top: var(--spacing-sm);
+        width: fit-content;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+
+        > label {
+            width: fit-content;
+        }
+
+        > input,
+        > select,
+        > textarea {
+            border-radius: 0 var(--radius) var(--radius) var(--radius);
+        }
+
+        > small {
+            margin-top: var(--spacing-2xs);
+            color: var(--color-gray-6);
+        }
+    }
+}
+
+input[type="checkbox"] {
+    width: var(--spacing-lg);
+    height: var(--spacing-lg);
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    appearance: none;
+    vertical-align: middle;
+
+    &:checked {
+        border-color: var(--color-accent);
+        background: var(--color-accent);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+        background-size: 70%;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    &:hover {
+        &:checked {
+            background-color: var(--color-accent-dark);
+            border-color: var(--color-accent-dark);
+        }
+
+        &:not(:checked) {
+            background-color: var(--color-accent-light);
+        }
+    }
+}
+
+table {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+
+    thead {
+        color: var(--color-white);
+        background: var(--color-accent);
+
+        th:not(:last-child) {
+            border-right: 1px solid var(--color-white-faint);
+        }
+    }
+
+    th,
+    td {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        text-align: left;
+
+        &:not(:last-child) {
+            border-right: 1px solid var(--color-border);
+        }
+    }
+
+    tbody {
+        tr {
+            &:not(:last-child) td {
+                border-bottom: 1px solid var(--color-border);
+            }
+
+            &:nth-child(even) {
+                background: var(--color-gray-0);
+            }
+        }
+    }
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.subtitle {
+    color: var(--color-gray-6);
+    font-size: var(--font-size-sm);
+}
+
+.is-empty {
+    margin: 0;
+    padding: var(--spacing-lg);
+    color: var(--color-gray-5);
+    text-align: center;
+}

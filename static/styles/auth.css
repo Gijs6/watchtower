@@ -1,0 +1,52 @@
+body.module-auth {
+    display: flex;
+    min-height: 100vh;
+    color: var(--color-white);
+    background: linear-gradient(135deg, var(--color-teal-9) 0%, var(--color-teal-7) 60%, var(--color-teal-5) 100%);
+
+    .auth-main {
+        display: grid;
+        grid-template-rows: 1fr auto 1fr;
+        align-items: center;
+        gap: var(--spacing-xl);
+        padding: var(--spacing-xl);
+        max-width: min(100vw, 40em);
+
+        .wordmark {
+            align-self: end;
+            font-size: 1.75em;
+            color: var(--color-white);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-panel {
+            background: var(--color-bg);
+            color: var(--color-fg);
+            width: fit-content;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+            h1 {
+                color: var(--color-accent-dark);
+                font-size: var(--font-size-lg);
+            }
+
+            input {
+                width: 100%;
+            }
+
+            button[type="submit"] {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .app-info {
+            align-self: start;
+            margin: 0;
+            color: var(--color-white-faint);
+            font-size: var(--font-size-sm);
+        }
+    }
+}
