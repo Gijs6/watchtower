@@ -1,4 +1,8 @@
-<div id="sites-island" class="watch-island">
+<div id="sites-island"
+     class="watch-island"
+     hx-get="{{ url_for('watcher.island') }}"
+     hx-trigger="every 10s"
+     hx-swap="outerHTML">
     {% if not sites %}
         <p class="empty-notice">No sites yet. Add one with the button above.</p>
     {% else %}

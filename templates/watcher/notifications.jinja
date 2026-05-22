@@ -9,36 +9,6 @@
         </h1>
     </div>
 
-    <section class="check-history">
-        {% if not events %}
-            <p class="empty-notice">No changes detected yet.</p>
-        {% else %}
-            <ol class="check-history__list">
-                {% for snap in events %}
-                    <li class="check-history__entry check-history__entry--changed">
-                        <div class="check-history__entry-header">
-                            <span class="check-history__dot" aria-hidden="true"></span>
-                            <a href="{{ url_for('watcher.detail', site_id=snap.site_id) }}"
-                               class="notif-site-name">{{ snap.site.name }}</a>
-                            <time class="check-history__time notif-time"
-                                  data-live
-                                  datetime="{{ snap.captured_at | to_iso }}">
-                                {{ snap.captured_at | strftime }}
-                            </time>
-                        </div>
-                        {% if snap.diff_snippet %}
-                            <details class="diff-view">
-                                <summary class="diff-view__toggle">
-                                    <i class="fa-solid fa-fw fa-chevron-right diff-view__toggle-icon--closed"
-                                       aria-hidden="true"></i><i class="fa-solid fa-fw fa-chevron-down diff-view__toggle-icon--open"
-   aria-hidden="true"></i> Show diff
-                                </summary>
-                                <pre class="diff-view__code">{{ snap.diff_snippet | diff_html }}</pre>
-                            </details>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ol>
-        {% endif %}
-    </section>
+    {% include "watcher/islands/events.jinja" %}
+
 {% endblock %}

@@ -68,7 +68,9 @@ def diff_html_filter(diff_text):
             parts.append(f'<span class="diff-line diff-line--hunk">{content}</span>')
         elif line.startswith("\\ "):
             content = html_module.escape(line)
-            parts.append(f'<span class="diff-line diff-line--truncated">{content}</span>')
+            parts.append(
+                f'<span class="diff-line diff-line--truncated">{content}</span>'
+            )
         else:
             gutter = " "
             content = html_module.escape(line[1:] if line.startswith(" ") else line)

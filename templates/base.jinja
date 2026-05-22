@@ -20,8 +20,12 @@
                         {{ nav_item('watcher.index', '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
                     </li>
                     <li class="app-nav__item">
-                        {{ nav_item('watcher.notifications', '<i class="fa-solid fa-fw fa-bell" aria-hidden="true"></i> Notifications' + (' <span class="app-nav__badge"
-                               aria-label="' + notification_count|string + ' unread">' + notification_count|string + '</span>' if notification_count > 0 else '') ) }}
+                        <a href="{{ url_for('watcher.notifications') }}"
+                           class="app-nav__link{% if request.endpoint == 'watcher.notifications' %} app-nav__link--active{% endif %}">
+                            <i class="fa-solid fa-fw fa-bell" aria-hidden="true"></i> Notifications
+                            {% include "watcher/islands/notif_badge.jinja" %}
+
+                        </a>
                     </li>
                     <li class="app-nav__item">
                         {{ nav_item('watcher.settings', '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings' + ('' if discord_webhook_set else ' <span class="app-nav__warning"

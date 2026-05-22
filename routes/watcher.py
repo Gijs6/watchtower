@@ -12,7 +12,36 @@ watcher_bp = Blueprint("watcher", __name__, url_prefix="/watcher")
 
 @watcher_bp.get("/")
 def index():
-    return render_template("watcher/index.jinja")
+    sites = Site.query.order_by(Site.name).all()
+    latest = {
+        site.id: Snapshot.query.filter_by(site_id=site.id)
+        .order_by(Snapshot.captured_at.desc())
+        .first()
+        for site in sites
+    }
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=24)
+    timeline = {}
+    for site in sites:
+        buckets = [None] * 24
+        snaps = Snapshot.query.filter(
+            Snapshot.site_id == site.id,
+            Snapshot.captured_at >= cutoff,
+        ).all()
+        for snap in snaps:
+            ts = snap.captured_at
+            if ts.tzinfo is None:
+                ts = ts.replace(tzinfo=timezone.utc)
+            bucket = 23 - int((now - ts).total_seconds() / 3600)
+            if 0 <= bucket < 24:
+                if buckets[bucket] is None:
+                    buckets[bucket] = 0
+                if snap.changed:
+                    buckets[bucket] += 1
+        timeline[site.id] = buckets
+    return render_template(
+        "watcher/index.jinja", sites=sites, latest=latest, timeline=timeline
+    )
 
 
 @watcher_bp.get("/island")
@@ -148,6 +177,39 @@ def detail(site_id):
     return render_template(
         "watcher/site.jinja", site=site, snapshots=_squash_snapshots(snapshots)
     )
+
+
+@watcher_bp.get("/sites/<site_id>/history")
+def history_island(site_id):
+    site = db.get_or_404(Site, site_id)
+    snapshots = (
+        Snapshot.query.filter_by(site_id=site.id)
+        .order_by(Snapshot.captured_at.desc())
+        .limit(200)
+        .all()
+    )
+    return render_template(
+        "watcher/islands/history.jinja",
+        site=site,
+        snapshots=_squash_snapshots(snapshots),
+    )
+
+
+@watcher_bp.get("/notifications/events")
+def events_island():
+    events = (
+        Snapshot.query.options(joinedload(Snapshot.site))
+        .filter(Snapshot.changed == True)
+        .order_by(Snapshot.captured_at.desc())
+        .limit(50)
+        .all()
+    )
+    return render_template("watcher/islands/events.jinja", events=events)
+
+
+@watcher_bp.get("/notif-count")
+def notif_badge():
+    return render_template("watcher/islands/notif_badge.jinja")
 
 
 @watcher_bp.get("/notifications")

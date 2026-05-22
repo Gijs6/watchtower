@@ -14,9 +14,6 @@
         </div>
     </div>
 
-    <div id="sites-island"
-         class="watch-island"
-         hx-get="{{ url_for('watcher.island') }}"
-         hx-trigger="load, every 30s"
-         hx-swap="outerHTML"></div>
+    {% include "watcher/islands/sites.jinja" %}
+
 {% endblock %}

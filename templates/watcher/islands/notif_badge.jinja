@@ -1,0 +1,6 @@
+<span id="notif-badge"
+      hx-get="{{ url_for('watcher.notif_badge') }}"
+      hx-trigger="every 30s"
+      hx-swap="outerHTML">
+    {% if notification_count > 0 %}<span class="app-nav__badge" aria-label="{{ notification_count }} unread">{{ notification_count }}</span>{% endif %}
+</span>
