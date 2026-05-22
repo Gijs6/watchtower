@@ -2,37 +2,37 @@
 
 {% macro nav_item(endpoint, name) %}
     <a href="{{ url_for(endpoint) }}"
-       class="nav-item{% if request.endpoint == endpoint %} is-active{% endif %}">{{ name | safe }}</a>
+       class="app-nav__link{% if request.endpoint == endpoint %} app-nav__link--active{% endif %}">{{ name | safe }}</a>
 {% endmacro %}
 
 {% block body_content %}
-    <header class="page-header">
-        <a href="{{ url_for('index') }}" class="wordmark">
+    <header class="app-header">
+        <a href="{{ url_for('index') }}" class="app-header__brand">
             <i class="fa-solid fa-tower-observation" aria-hidden="true"></i> Watchtower
         </a>
     </header>
 
-    <div class="page-layout">
-        <aside class="page-sidebar">
-            <nav class="sidebar-nav" aria-label="Main navigation">
-                <ul class="nav-list">
-                    <li class="nav-entry">
+    <div class="app-layout">
+        <aside class="app-layout__sidebar">
+            <nav class="app-nav" aria-label="Main navigation">
+                <ul class="app-nav__list">
+                    <li class="app-nav__item">
                         {{ nav_item('watcher.index', '<i class="fa-solid fa-fw fa-home" aria-hidden="true"></i> Dashboard') }}
                     </li>
-                    <li class="nav-entry">
+                    <li class="app-nav__item">
                         {{ nav_item('watcher.settings', '<i class="fa-solid fa-fw fa-gear" aria-hidden="true"></i> Settings') }}
                     </li>
                 </ul>
             </nav>
 
             <form method="post" action="{{ url_for('logout') }}">
-                <button type="submit" class="logout-button">
+                <button type="submit" class="app-nav__signout">
                     <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign out
                 </button>
             </form>
         </aside>
 
-        <main class="page-main">
+        <main class="app-layout__content">
             {% block content %}{% endblock %}
         </main>
     </div>

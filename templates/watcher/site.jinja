@@ -3,42 +3,42 @@
 {% block title %}{{ site.name }}{% endblock %}
 
 {% block content %}
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="{{ url_for('watcher.index') }}">
+    <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ url_for('watcher.index') }}" class="page-breadcrumb__link">
             <i class="fa-solid fa-home" aria-hidden="true"></i> Dashboard
         </a>
         <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
         <span>{{ site.name }}</span>
     </nav>
 
-    <div class="page-heading">
+    <div class="page-hero">
         <h1>{{ site.name }}</h1>
-        <div class="actions">
+        <div class="page-hero__actions">
             <form method="post"
                   action="{{ url_for('watcher.delete', site_id=site.id) }}"
                   onsubmit="return confirm('Remove {{ site.name }}?')">
-                <button type="submit" class="danger">
+                <button type="submit" class="btn--danger">
                     <i class="fa-solid fa-trash" aria-hidden="true"></i> Remove
                 </button>
             </form>
         </div>
     </div>
 
-    <section class="settings-card">
+    <section class="config-section">
         <h2>Site settings</h2>
         <form method="post"
               action="{{ url_for('watcher.update', site_id=site.id) }}"
-              class="settings-form">
-            <div class="settings-fields">
-                <div class="field">
+              class="config-section__form">
+            <div class="config-section__fields">
+                <div class="form-field">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" value="{{ site.name }}" required />
                 </div>
-                <div class="field">
+                <div class="form-field">
                     <label for="url">URL</label>
                     <input type="url" id="url" name="url" value="{{ site.url }}" required />
                 </div>
-                <div class="field">
+                <div class="form-field">
                     <label for="check_interval">Interval (s)</label>
                     <input type="number"
                            id="check_interval"
@@ -48,7 +48,7 @@
                            max="86400" />
                 </div>
             </div>
-            <div class="form-actions">
+            <div class="config-section__actions">
                 <button type="submit">
                     <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save
                 </button>
@@ -56,21 +56,21 @@
         </form>
     </section>
 
-    <section class="history-section">
+    <section class="check-history">
         <h2>Change history</h2>
 
         {% if not snapshots %}
-            <p class="is-empty">No checks recorded yet.</p>
+            <p class="empty-notice">No checks recorded yet.</p>
         {% else %}
-            <ol class="history-list">
+            <ol class="check-history__list">
                 {% for snap in snapshots %}
-                    <li class="history-entry {% if snap.error %}is-error{% elif snap.changed %}is-changed{% else %}is-ok{% endif %}">
-                        <div class="history-entry-header">
-                            <span class="history-dot" aria-hidden="true"></span>
-                            <time class="history-time" datetime="{{ snap.captured_at | to_iso }}">
+                    <li class="check-history__entry {% if snap.error %}check-history__entry--error{% elif snap.changed %}check-history__entry--changed{% else %}check-history__entry--ok{% endif %}">
+                        <div class="check-history__entry-header">
+                            <span class="check-history__dot" aria-hidden="true"></span>
+                            <time class="check-history__time" datetime="{{ snap.captured_at | to_iso }}">
                                 {{ snap.captured_at | strftime }}
                             </time>
-                            <span class="history-badge">
+                            <span class="check-history__badge">
                                 {% if snap.error %}
                                     <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Error
                                 {% elif snap.changed %}
@@ -82,11 +82,11 @@
                         </div>
 
                         {% if snap.error %}
-                            <p class="history-error">{{ snap.error }}</p>
+                            <p class="check-history__error-msg">{{ snap.error }}</p>
                         {% elif snap.changed and snap.diff_snippet %}
-                            <details class="diff-details">
-                                <summary>Show diff</summary>
-                                <pre class="diff-block">{{ snap.diff_snippet | diff_html }}</pre>
+                            <details class="diff-view">
+                                <summary class="diff-view__toggle">Show diff</summary>
+                                <pre class="diff-view__code">{{ snap.diff_snippet | diff_html }}</pre>
                             </details>
                         {% endif %}
                     </li>

@@ -39,12 +39,12 @@
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
-        <div class="messages" aria-live="polite" aria-atomic="false">
+        <div class="flash-tray" aria-live="polite" aria-atomic="false">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    <ul class="flash-list">
+                    <ul class="flash-tray__list">
                         {% for category, message in messages %}
-                            <li class="flash is-{{ category }}">
+                            <li class="flash-tray__item flash-tray__item--{{ category }}">
                                 {% if category == "success" %}
                                     <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                                 {% elif category == "error" %}

@@ -47,13 +47,13 @@ def diff_html_filter(diff_text):
     for line in diff_text.splitlines():
         escaped = html_module.escape(line)
         if line.startswith("+"):
-            parts.append(f'<span class="diff-added">{escaped}</span>')
+            parts.append(f'<span class="diff-view__line--added">{escaped}</span>')
         elif line.startswith("-"):
-            parts.append(f'<span class="diff-removed">{escaped}</span>')
+            parts.append(f'<span class="diff-view__line--removed">{escaped}</span>')
         elif line.startswith("@"):
-            parts.append(f'<span class="diff-hunk">{escaped}</span>')
+            parts.append(f'<span class="diff-view__line--hunk">{escaped}</span>')
         else:
-            parts.append(f'<span class="diff-context">{escaped}</span>')
+            parts.append(f'<span class="diff-view__line--context">{escaped}</span>')
     return Markup("\n".join(parts))
 
 

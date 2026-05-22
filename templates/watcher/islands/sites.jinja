@@ -1,8 +1,8 @@
-<div id="sites-island" class="island-content">
+<div id="sites-island" class="watch-island">
     {% if not sites %}
-        <p class="is-empty">No sites yet. Add one with the button above.</p>
+        <p class="empty-notice">No sites yet. Add one with the button above.</p>
     {% else %}
-        <ul class="site-grid">
+        <ul class="watch-grid">
             {% for site in sites %}
                 {% set snap = latest[site.id] %}
 
@@ -18,44 +18,44 @@
                     {% set status = "ok" %}
                 {% endif %}
 
-                <li class="site-card is-{{ status }}">
-                    <div class="site-card-header">
-                        <span class="status-dot" aria-hidden="true"></span>
+                <li class="watch-card watch-card--{{ status }}">
+                    <div class="watch-card__header">
+                        <span class="watch-card__status" aria-hidden="true"></span>
                         <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
-                           class="site-name">{{ site.name }}</a>
+                           class="watch-card__name">{{ site.name }}</a>
                     </div>
 
                     <a href="{{ site.url }}"
-                       class="site-url"
+                       class="watch-card__url"
                        target="_blank"
                        rel="noopener noreferrer">{{ site.url }}</a>
 
-                    <div class="site-timeline" aria-label="Last 24 hours">
+                    <div class="watch-card__timeline" aria-label="Last 24 hours">
                         {% for bucket in timeline[site.id] %}
                             {% if bucket is none %}
                                 {% set lvl = "empty" %}
                             {% elif bucket == 0 %}
-                                {% set lvl = "0" %}
+                                {% set lvl = "lvl-0" %}
                             {% elif bucket == 1 %}
-                                {% set lvl = "1" %}
+                                {% set lvl = "lvl-1" %}
                             {% elif bucket == 2 %}
-                                {% set lvl = "2" %}
+                                {% set lvl = "lvl-2" %}
                             {% else %}
-                                {% set lvl = "3" %}
+                                {% set lvl = "lvl-3" %}
                             {% endif %}
-                            <span class="tl-block tl-{{ lvl }}"
+                            <span class="tl-bar tl-bar--{{ lvl }}"
                                   title="{{ bucket if bucket is not none else 'no data' }} change{{ 's' if bucket != 1 else '' }}"></span>
                         {% endfor %}
                     </div>
 
-                    <dl class="site-meta">
-                        <div class="site-meta-item">
+                    <dl class="watch-card__meta">
+                        <div class="watch-card__meta-item">
                             <dt>Checked</dt>
                             <dd>
                                 {{ site.last_checked_at | timeago }}
                             </dd>
                         </div>
-                        <div class="site-meta-item">
+                        <div class="watch-card__meta-item">
                             <dt>Changed</dt>
                             <dd>
                                 {{ site.last_changed_at | timeago }}
@@ -63,10 +63,10 @@
                         </div>
                     </dl>
 
-                    <div class="site-card-actions">
+                    <div class="watch-card__actions">
                         <form method="post"
                               action="{{ url_for('watcher.toggle', site_id=site.id) }}">
-                            <button type="submit" class="ghost sm">
+                            <button type="submit" class="btn--ghost btn--sm">
                                 {% if site.is_active %}
                                     <i class="fa-solid fa-pause" aria-hidden="true"></i> Pause
                                 {% else %}

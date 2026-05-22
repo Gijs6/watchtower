@@ -3,11 +3,11 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <div class="page-heading">
+    <div class="page-hero">
         <h1>
             <i class="fa-solid fa-home" aria-hidden="true"></i> Dashboard
         </h1>
-        <div class="actions">
+        <div class="page-hero__actions">
             <button type="button" id="open-add-site">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> Add site
             </button>
@@ -15,23 +15,23 @@
     </div>
 
     <div id="sites-island"
-         class="island"
+         class="watch-island"
          hx-get="{{ url_for('watcher.island') }}"
          hx-trigger="load, every 30s"
          hx-swap="outerHTML"></div>
 
-    <dialog id="add-site-dialog" aria-labelledby="add-site-heading">
-        <div class="dialog-header">
+    <dialog id="add-site-dialog" class="modal" aria-labelledby="add-site-heading">
+        <div class="modal__header">
             <h2 id="add-site-heading">Add site</h2>
             <button type="button"
-                    class="icon-button"
+                    class="modal__close"
                     id="close-add-site"
                     aria-label="Close">
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
         </div>
         <form method="post" action="{{ url_for('watcher.add') }}">
-            <div class="field">
+            <div class="form-field">
                 <label for="site-name">Name</label>
                 <input type="text"
                        id="site-name"
@@ -39,7 +39,7 @@
                        placeholder="My Website"
                        required />
             </div>
-            <div class="field">
+            <div class="form-field">
                 <label for="site-url">URL</label>
                 <input type="url"
                        id="site-url"
@@ -47,7 +47,7 @@
                        placeholder="https://example.com"
                        required />
             </div>
-            <div class="field">
+            <div class="form-field">
                 <label for="site-interval">Check interval (seconds)</label>
                 <input type="number"
                        id="site-interval"
