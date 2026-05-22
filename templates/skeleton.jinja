@@ -38,7 +38,7 @@
         {% block extra_headers %}{% endblock %}
     </head>
 
-    <body class="{% block body_class %}{% endblock %}">
+    <body class="{% block body_class %}{% endblock %}" hx-boost="true">
         <div class="flash-tray" aria-live="polite" aria-atomic="false">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
