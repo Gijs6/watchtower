@@ -80,7 +80,7 @@ def diff_html_filter(diff_text):
                 f'<span class="diff-line__content">{content}</span>'
                 f"</span>"
             )
-    return Markup("\n".join(parts))
+    return Markup("".join(parts))
 
 
 FILTERS = {
