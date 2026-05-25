@@ -20,7 +20,6 @@ body.pg-auth {
             font-size: 1.75em;
             font-weight: var(--font-weight-bold);
             color: var(--color-white);
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
 
         .auth-layout__panel {
@@ -29,7 +28,6 @@ body.pg-auth {
             width: fit-content;
             padding: var(--spacing-lg) var(--spacing-xl);
             border-radius: var(--radius);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
             h1 {
                 color: var(--color-accent-dark);

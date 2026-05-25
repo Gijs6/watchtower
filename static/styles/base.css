@@ -234,7 +234,6 @@ body {
     color: var(--color-fg);
     background: var(--color-bg);
     border-radius: var(--radius);
-    box-shadow: 0 4px 24px var(--color-overlay);
 
     &::backdrop {
         background: var(--color-overlay);
