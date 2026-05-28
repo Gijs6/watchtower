@@ -102,12 +102,22 @@ def require_login():
 
 @app.errorhandler(404)
 def not_found(_e):
-    return render_template("error.jinja", code=404, title="Not Found", description="The page you're looking for doesn't exist."), 404
+    return render_template(
+        "error.jinja",
+        code=404,
+        title="Not Found",
+        description="The page you're looking for doesn't exist.",
+    ), 404
 
 
 @app.errorhandler(500)
 def server_error(_e):
-    return render_template("error.jinja", code=500, title="Server Error", description="Something went wrong on our end. Please try again later."), 500
+    return render_template(
+        "error.jinja",
+        code=500,
+        title="Server Error",
+        description="Something went wrong on our end. Please try again later.",
+    ), 500
 
 
 if __name__ == "__main__":
