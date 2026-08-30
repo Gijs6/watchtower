@@ -1,36 +1,27 @@
 {% extends "skeleton.jinja" %}
+{% from "_macros.jinja" import icon %}
 
 {% block title %}Sign in{% endblock %}
-{% block body_class %}pg-auth{% endblock %}
+{% block body_class %}page page--centered{% endblock %}
 
 {% block body_content %}
-    <main class="auth-layout">
-        <span class="auth-layout__brand">
-            <i class="fa-solid fa-tower-observation" aria-hidden="true"></i> Watchtower
-        </span>
+    <main class="page__main auth">
+        <span class="auth__brand">{{ icon("tower-control") }} Watchtower</span>
 
-        <section class="auth-layout__panel">
-            <h1>
-                <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Sign in
-            </h1>
-            <form method="POST" action="{{ url_for('login') }}">
-                <div class="form-field">
-                    <label for="password">
-                        <i class="fa-solid fa-lock" aria-hidden="true"></i> Password
-                    </label>
-                    <input type="password"
-                           id="password"
-                           name="password"
-                           required
-                           autofocus
-                           autocomplete="current-password" />
-                </div>
-                <button type="submit">
-                    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Sign in
-                </button>
-            </form>
-        </section>
-
-        <p class="auth-layout__footer">Watchtower</p>
+        <form method="POST" action="{{ url_for('login') }}" class="form auth__form">
+            <div class="field">
+                <label class="field__label" for="password">Password</label>
+                <input class="field__control field__control--full"
+                       type="password"
+                       id="password"
+                       name="password"
+                       required
+                       autofocus
+                       autocomplete="current-password" />
+            </div>
+            <div class="form__actions">
+                <button type="submit" class="button">{{ icon("log-in") }} Sign in</button>
+            </div>
+        </form>
     </main>
 {% endblock %}

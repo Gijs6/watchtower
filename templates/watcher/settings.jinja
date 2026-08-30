@@ -1,35 +1,29 @@
 {% extends "base.jinja" %}
+{% from "_macros.jinja" import icon %}
 
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-    <div class="page-hero">
-        <h1>
-            <i class="fa-solid fa-gear" aria-hidden="true"></i> Settings
-        </h1>
+    <div class="page-head">
+        <h1>Settings</h1>
     </div>
 
-    <section class="config-section">
-        <h2>Notifications</h2>
-        <form method="post"
-              action="{{ url_for('watcher.settings_save') }}"
-              class="config-section__form">
-            <div class="config-section__fields">
-                <div class="form-field">
-                    <label for="discord_webhook">Discord webhook URL</label>
-                    <input type="url"
-                           id="discord_webhook"
-                           name="discord_webhook"
-                           value="{{ webhook }}"
-                           placeholder="https://discord.com/api/webhooks/..." />
-                    <p class="form-field__hint">Watchtower will send a message to this webhook when a monitored page changes.</p>
-                </div>
+    <form method="post" action="{{ url_for('watcher.settings_save') }}" class="form">
+        <section class="form__section">
+            <h2>Notifications</h2>
+            <div class="field">
+                <label class="field__label" for="discord_webhook">Discord webhook URL</label>
+                <input class="field__control field__control--full"
+                       type="url"
+                       id="discord_webhook"
+                       name="discord_webhook"
+                       value="{{ webhook }}"
+                       placeholder="https://discord.com/api/webhooks/..." />
+                <p class="field__hint">Watchtower sends a message to this webhook when a monitored page changes.</p>
             </div>
-            <div class="config-section__actions">
-                <button type="submit">
-                    <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save
-                </button>
-            </div>
-        </form>
-    </section>
+        </section>
+        <div class="form__actions">
+            <button type="submit" class="button">{{ icon("save") }} Save</button>
+        </div>
+    </form>
 {% endblock %}

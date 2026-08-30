@@ -105,7 +105,7 @@ def not_found(_e):
     return render_template(
         "error.jinja",
         code=404,
-        title="Not Found",
+        title="Not found",
         description="The page you're looking for doesn't exist.",
     ), 404
 
@@ -115,8 +115,8 @@ def server_error(_e):
     return render_template(
         "error.jinja",
         code=500,
-        title="Server Error",
-        description="Something went wrong on our end. Please try again later.",
+        title="Server error",
+        description="Something went wrong on our end, please try again later.",
     ), 500
 
 

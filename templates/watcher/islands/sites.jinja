@@ -1,10 +1,14 @@
+{% from "_macros.jinja" import icon %}
 <div id="sites-island"
-     class="watch-island"
      hx-get="{{ url_for('watcher.island') }}"
      hx-trigger="every 10s"
      hx-swap="outerHTML">
     {% if not sites %}
-        <p class="empty-notice">No sites yet. Add one with the button above.</p>
+        <div class="empty">
+            {{ icon("tower-control", "empty__icon") }}
+            <p class="empty__title">No sites yet</p>
+            <p class="empty__text">Add one with the button above and Watchtower starts checking it.</p>
+        </div>
     {% else %}
         <ul class="watch-grid">
             {% for site in sites %}
@@ -55,42 +59,34 @@
                                 {% set time_label = h_near ~ "-" ~ h_far ~ "h ago" %}
                             {% endif %}
                             {% if bucket is none %}
-                                {% set tip = "No data - " ~ time_label %}
+                                {% set tip = "No data, " ~ time_label %}
                             {% elif bucket == 0 %}
-                                {% set tip = "No changes - " ~ time_label %}
+                                {% set tip = "No changes, " ~ time_label %}
                             {% elif bucket == 1 %}
-                                {% set tip = "1 change - " ~ time_label %}
+                                {% set tip = "1 change, " ~ time_label %}
                             {% else %}
-                                {% set tip = bucket ~ " changes - " ~ time_label %}
+                                {% set tip = bucket ~ " changes, " ~ time_label %}
                             {% endif %}
-                            <span class="tl-bar tl-bar--{{ lvl }}" data-tooltip="{{ tip }}"></span>
+                            <span class="tl-bar tl-bar--{{ lvl }}" data-tip="{{ tip }}"></span>
                         {% endfor %}
                     </div>
 
                     <dl class="watch-card__meta">
-                        <div class="watch-card__meta-item">
+                        <div>
                             <dt>Checked</dt>
-                            <dd>
-                                <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>
-                            </dd>
+                            <dd><time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time></dd>
                         </div>
-                        <div class="watch-card__meta-item">
+                        <div>
                             <dt>Changed</dt>
-                            <dd>
-                                <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
-                            </dd>
+                            <dd><time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time></dd>
                         </div>
                     </dl>
 
                     <div class="watch-card__actions">
-                        <form method="post"
-                              action="{{ url_for('watcher.toggle', site_id=site.id) }}">
-                            <button type="submit" class="btn--ghost btn--sm">
-                                {% if site.is_active %}
-                                    <i class="fa-solid fa-pause" aria-hidden="true"></i> Pause
-                                {% else %}
-                                    <i class="fa-solid fa-play" aria-hidden="true"></i> Resume
-                                {% endif %}
+                        <form method="post" action="{{ url_for('watcher.toggle', site_id=site.id) }}">
+                            <button type="submit" class="button button--ghost button--sm">
+                                {% if site.is_active %}{{ icon("pause") }} Pause
+                                {%- else %}{{ icon("play") }} Resume{% endif %}
                             </button>
                         </form>
                     </div>

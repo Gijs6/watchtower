@@ -1,19 +1,17 @@
 {% extends "base.jinja" %}
+{% from "_macros.jinja" import icon %}
 
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <div class="page-hero">
-        <h1>
-            <i class="fa-solid fa-home" aria-hidden="true"></i> Dashboard
-        </h1>
-        <div class="page-hero__actions">
-            <a href="{{ url_for('watcher.add_site') }}" class="btn">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i> Add site
+    <div class="page-head">
+        <h1>Dashboard</h1>
+        <div class="page-head__actions">
+            <a href="{{ url_for('watcher.add_site') }}" class="button">
+                {{ icon("plus") }} Add site
             </a>
         </div>
     </div>
 
     {% include "watcher/islands/sites.jinja" %}
-
 {% endblock %}

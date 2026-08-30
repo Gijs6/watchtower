@@ -1,3 +1,4 @@
+{% from "_macros.jinja" import icon %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -6,59 +7,43 @@
 
         <title>{%- block title -%}{%- endblock %} - Watchtower</title>
 
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+        <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml" />
+        <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}" />
 
+        <link rel="stylesheet" href="https://cdn.gijs6.nl/theme/v1/all.css" />
+        <link rel="stylesheet" href="https://cdn.gijs6.nl/theme/v1/accent/rust.css" />
         {% if config.DEBUG %}
             <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/skeleton.css') }}" />
-            <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/colors.css') }}" />
-            <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/theming.css') }}" />
-            <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/base.css') }}" />
-            <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/auth.css') }}" />
-            <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/watcher.css') }}" />
+                  href="{{ url_for('static', filename='styles/app.css') }}" />
         {% else %}
             <link rel="stylesheet"
-                  href="{{ url_for('static', filename='styles/main.min.css') }}" />
+                  href="{{ url_for('static', filename='styles/app.min.css') }}" />
         {% endif %}
 
-        <script src="https://kit.fontawesome.com/4a94c21782.js"
-                crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='vendor/htmx.min.js') }}" defer></script>
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
-              rel="stylesheet" />
+        <script src="https://cdn.gijs6.nl/theme/v1/js/toast.js" defer></script>
+        <script src="https://cdn.gijs6.nl/theme/v1/js/nav.js" defer></script>
 
         {% block extra_headers %}{% endblock %}
     </head>
 
-    <body class="{% block body_class %}{% endblock %}" hx-boost="true">
-        <div class="flash-tray" aria-live="polite" aria-atomic="false">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul class="flash-tray__list">
-                        {% for category, message in messages %}
-                            <li class="flash-tray__item flash-tray__item--{{ category }}">
-                                {% if category == "success" %}
-                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                                {% elif category == "error" %}
-                                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-                                {% elif category == "info" %}
-                                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                                {% endif %}
-                                {{ message }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
-        </div>
+    <body class="{% block body_class %}{% endblock %}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="toaster" aria-live="polite">
+                    {% for category, message in messages %}
+                        {% set kind = "success" if category == "success" else "danger" if category == "error" else "info" %}
+                        <div class="toast toast--{{ kind }}" role="status" data-auto-dismiss="6000">
+                            {% if kind == "success" %}{{ icon("circle-check", "toast__icon") }}
+                            {%- elif kind == "danger" %}{{ icon("triangle-alert", "toast__icon") }}
+                            {%- else %}{{ icon("info", "toast__icon") }}{% endif %}
+                            <div class="toast__body">{{ message }}</div>
+                            <button type="button" class="toast__dismiss" aria-label="Dismiss">{{ icon("x") }}</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         {% block body_content %}{% endblock %}
 

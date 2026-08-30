@@ -1,12 +1,13 @@
 {% extends "skeleton.jinja" %}
 
 {% block title %}{{ code }} {{ title }}{% endblock %}
+{% block body_class %}page page--bare{% endblock %}
 
 {% block body_content %}
-    <div class="error-page">
-        <span class="error-page__code">{{ code }}</span>
-        <h1 class="error-page__title">{{ title }}</h1>
-        <p class="error-page__desc">{{ description }}</p>
-        <a href="{{ url_for('index') }}" class="btn">Go home</a>
-    </div>
+    <main class="page__main">
+        <p class="error__code">{{ code }}</p>
+        <h1>{{ title }}</h1>
+        <p class="lead">{{ description }}</p>
+        <a href="{{ url_for('index') }}" class="button">Go home</a>
+    </main>
 {% endblock %}

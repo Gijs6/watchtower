@@ -1,3 +1,4 @@
+{% from "_macros.jinja" import icon %}
 <section class="check-history"
          id="history-island"
          hx-get="{{ url_for('watcher.history_island', site_id=site.id) }}"
@@ -6,51 +7,44 @@
     <h2>Change history</h2>
 
     {% if not snapshots %}
-        <p class="empty-notice">No checks recorded yet.</p>
+        <div class="empty empty--plain">
+            <p class="empty__text">No checks recorded yet.</p>
+        </div>
     {% else %}
         <ol class="check-history__list">
             {% for snap, count, oldest in snapshots %}
-                <li class="check-history__entry {% if snap.error %}check-history__entry--error{% elif snap.changed %}check-history__entry--changed{% else %}check-history__entry--ok{% endif %}">
-                    <div class="check-history__entry-header">
+                {% if snap.error %}
+                    {% set kind = "error" %}
+                {% elif snap.changed %}
+                    {% set kind = "changed" %}
+                {% else %}
+                    {% set kind = "ok" %}
+                {% endif %}
+                <li class="check-history__entry check-history__entry--{{ kind }}">
+                    <div class="check-history__head">
                         <span class="check-history__dot" aria-hidden="true"></span>
-                        {% if count > 1 %}
-                            <time class="check-history__time"
-                                  datetime="{{ oldest.captured_at | to_iso }}">
-                                {{ oldest.captured_at | strftime }}
-                            </time>
-                            <span class="check-history__time-sep" aria-hidden="true">-</span>
-                            <time class="check-history__time"
-                                  datetime="{{ snap.captured_at | to_iso }}">
+                        <span class="check-history__time">
+                            {%- if count > 1 -%}
+                                {{ oldest.captured_at | strftime }} to {{ snap.captured_at | strftime }}
+                            {%- else -%}
                                 {{ snap.captured_at | strftime }}
-                            </time>
-                        {% else %}
-                            <time class="check-history__time"
-                                  datetime="{{ snap.captured_at | to_iso }}">
-                                {{ snap.captured_at | strftime }}
-                            </time>
-                        {% endif %}
-                        <span class="check-history__badge">
-                            {% if snap.error %}
-                                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Error
-                            {% elif snap.changed %}
-                                <i class="fa-solid fa-bolt" aria-hidden="true"></i> Changed
-                            {% else %}
-                                <i class="fa-solid fa-check" aria-hidden="true"></i> No change
-                                {% if count > 1 %}&times;{{ count }}{% endif %}
-                            {% endif %}
+                            {%- endif -%}
                         </span>
+                        {% if kind == "error" %}
+                            <span class="badge badge--warn">{{ icon("triangle-alert") }} Error</span>
+                        {% elif kind == "changed" %}
+                            <span class="badge badge--bad">{{ icon("zap") }} Changed</span>
+                        {% else %}
+                            <span class="badge badge--ok">{{ icon("check") }} No change{% if count > 1 %} &times;{{ count }}{% endif %}</span>
+                        {% endif %}
                     </div>
 
                     {% if snap.error %}
-                        <p class="check-history__error-msg">{{ snap.error }}</p>
+                        <p class="check-history__error">{{ snap.error }}</p>
                     {% elif snap.changed and snap.diff_snippet %}
-                        <details class="diff-view">
-                            <summary class="diff-view__toggle">
-                                <i class="fa-solid fa-fw fa-chevron-right diff-view__toggle-icon--closed"
-                                   aria-hidden="true"></i><i class="fa-solid fa-fw fa-chevron-down diff-view__toggle-icon--open"
-   aria-hidden="true"></i> Show diff
-                            </summary>
-                            <pre class="diff-view__code">{{ snap.diff_snippet | diff_html }}</pre>
+                        <details class="diff-disclosure">
+                            <summary>{{ icon("chevron-down") }} Show diff</summary>
+                            {{ snap.diff_snippet | diff_html }}
                         </details>
                     {% endif %}
                 </li>

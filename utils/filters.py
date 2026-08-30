@@ -40,47 +40,54 @@ def to_iso_filter(value):
     return value.isoformat()
 
 
+def _diff_side(mod, text):
+    inner = "" if text is None else html_module.escape(text)
+    return f'<div class="diff__side diff__side--{mod}">{inner}</div>'
+
+
+def _diff_pair(left, right, lmod, rmod):
+    return f'<div class="diff__row">{_diff_side(lmod, left)}{_diff_side(rmod, right)}</div>'
+
+
 def diff_html_filter(diff_text):
     if not diff_text:
         return Markup("")
     parts = []
+    dels = []
+    adds = []
+
+    def flush():
+        for i in range(max(len(dels), len(adds))):
+            left = dels[i] if i < len(dels) else None
+            right = adds[i] if i < len(adds) else None
+            parts.append(
+                _diff_pair(
+                    left,
+                    right,
+                    "del" if left is not None else "blank",
+                    "add" if right is not None else "blank",
+                )
+            )
+        dels.clear()
+        adds.clear()
+
     for line in diff_text.splitlines():
-        if line.startswith("+"):
-            gutter = "+"
-            content = html_module.escape(line[1:])
-            parts.append(
-                f'<span class="diff-line diff-line--added">'
-                f'<span class="diff-line__gutter">{gutter}</span>'
-                f'<span class="diff-line__content">{content}</span>'
-                f"</span>"
-            )
+        if line.startswith("@"):
+            flush()
+            parts.append(f'<div class="diff__hunk">{html_module.escape(line)}</div>')
+        elif line.startswith("+"):
+            adds.append(line[1:])
         elif line.startswith("-"):
-            gutter = "-"
-            content = html_module.escape(line[1:])
-            parts.append(
-                f'<span class="diff-line diff-line--removed">'
-                f'<span class="diff-line__gutter">{gutter}</span>'
-                f'<span class="diff-line__content">{content}</span>'
-                f"</span>"
-            )
-        elif line.startswith("@"):
-            content = html_module.escape(line)
-            parts.append(f'<span class="diff-line diff-line--hunk">{content}</span>')
+            dels.append(line[1:])
         elif line.startswith("\\ "):
-            content = html_module.escape(line)
-            parts.append(
-                f'<span class="diff-line diff-line--truncated">{content}</span>'
-            )
+            flush()
+            parts.append(_diff_pair(line, line, "meta", "meta"))
         else:
-            gutter = " "
-            content = html_module.escape(line[1:] if line.startswith(" ") else line)
-            parts.append(
-                f'<span class="diff-line diff-line--context">'
-                f'<span class="diff-line__gutter">{gutter}</span>'
-                f'<span class="diff-line__content">{content}</span>'
-                f"</span>"
-            )
-    return Markup("".join(parts))
+            flush()
+            text = line[1:] if line.startswith(" ") else line
+            parts.append(_diff_pair(text, text, "ctx", "ctx"))
+    flush()
+    return Markup(f'<div class="diff diff--split">{"".join(parts)}</div>')
 
 
 FILTERS = {
