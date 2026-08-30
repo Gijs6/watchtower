@@ -5,7 +5,7 @@
      hx-swap="outerHTML">
     {% if not sites %}
         <div class="empty">
-            {{ icon("tower-control", "empty__icon") }}
+            {{ icon('tower-control', 'empty__icon') }}
             <p class="empty__title">No sites yet</p>
             <p class="empty__text">Add one with the button above and Watchtower starts checking it.</p>
         </div>
@@ -74,19 +74,26 @@
                     <dl class="watch-card__meta">
                         <div>
                             <dt>Checked</dt>
-                            <dd><time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time></dd>
+                            <dd>
+                                <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>
+                            </dd>
                         </div>
                         <div>
                             <dt>Changed</dt>
-                            <dd><time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time></dd>
+                            <dd>
+                                <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
+                            </dd>
                         </div>
                     </dl>
 
                     <div class="watch-card__actions">
-                        <form method="post" action="{{ url_for('watcher.toggle', site_id=site.id) }}">
+                        <form method="post"
+                              action="{{ url_for('watcher.toggle', site_id=site.id) }}">
                             <button type="submit" class="button button--ghost button--sm">
-                                {% if site.is_active %}{{ icon("pause") }} Pause
-                                {%- else %}{{ icon("play") }} Resume{% endif %}
+                                {% if site.is_active %}
+                                    {{ icon("pause") }} Pause
+                                {%- else %}{{ icon("play") }} Resume
+                                {% endif %}
                             </button>
                         </form>
                     </div>

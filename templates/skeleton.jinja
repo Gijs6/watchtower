@@ -7,8 +7,11 @@
 
         <title>{%- block title -%}{%- endblock %} - Watchtower</title>
 
-        <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml" />
-        <link rel="alternate icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+        <link rel="icon"
+              href="{{ url_for('static', filename='favicon.svg') }}"
+              type="image/svg+xml" />
+        <link rel="alternate icon"
+              href="{{ url_for('static', filename='favicon.ico') }}" />
 
         <link rel="stylesheet" href="https://cdn.gijs6.nl/theme/v1/all.css" />
         <link rel="stylesheet" href="https://cdn.gijs6.nl/theme/v1/accent/rust.css" />
@@ -33,10 +36,14 @@
                 <div class="toaster" aria-live="polite">
                     {% for category, message in messages %}
                         {% set kind = "success" if category == "success" else "danger" if category == "error" else "info" %}
-                        <div class="toast toast--{{ kind }}" role="status" data-auto-dismiss="6000">
-                            {% if kind == "success" %}{{ icon("circle-check", "toast__icon") }}
-                            {%- elif kind == "danger" %}{{ icon("triangle-alert", "toast__icon") }}
-                            {%- else %}{{ icon("info", "toast__icon") }}{% endif %}
+                        <div class="toast toast--{{ kind }}"
+                             role="status"
+                             data-auto-dismiss="6000">
+                            {% if kind == "success" %}
+                                {{ icon('circle-check', 'toast__icon') }}
+                            {%- elif kind == "danger" %}{{ icon('triangle-alert', 'toast__icon') }}
+                            {%- else %}{{ icon('info', 'toast__icon') }}
+                            {% endif %}
                             <div class="toast__body">{{ message }}</div>
                             <button type="button" class="toast__dismiss" aria-label="Dismiss">{{ icon("x") }}</button>
                         </div>

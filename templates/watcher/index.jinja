@@ -1,4 +1,5 @@
 {% extends "base.jinja" %}
+
 {% from "_macros.jinja" import icon %}
 
 {% block title %}Dashboard{% endblock %}
@@ -7,11 +8,10 @@
     <div class="page-head">
         <h1>Dashboard</h1>
         <div class="page-head__actions">
-            <a href="{{ url_for('watcher.add_site') }}" class="button">
-                {{ icon("plus") }} Add site
-            </a>
+            <a href="{{ url_for('watcher.add_site') }}" class="button">{{ icon("plus") }} Add site</a>
         </div>
     </div>
 
     {% include "watcher/islands/sites.jinja" %}
+
 {% endblock %}

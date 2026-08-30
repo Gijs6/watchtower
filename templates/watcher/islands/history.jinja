@@ -35,7 +35,9 @@
                         {% elif kind == "changed" %}
                             <span class="badge badge--bad">{{ icon("zap") }} Changed</span>
                         {% else %}
-                            <span class="badge badge--ok">{{ icon("check") }} No change{% if count > 1 %} &times;{{ count }}{% endif %}</span>
+                            <span class="badge badge--ok">{{ icon("check") }} No change
+                                {% if count > 1 %}&times;{{ count }}{% endif %}
+                            </span>
                         {% endif %}
                     </div>
 

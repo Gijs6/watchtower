@@ -1,4 +1,5 @@
 {% extends "skeleton.jinja" %}
+
 {% from "_macros.jinja" import icon %}
 
 {% block body_class %}page page--sidebar is-drawer{% endblock %}
@@ -27,21 +28,22 @@
 
                 {% call nav_link('watcher.notifications', 'Notifications', 'bell') %}
                     {% include "watcher/islands/notif_badge.jinja" %}
+
                 {% endcall %}
 
                 {% call nav_link('watcher.settings', 'Settings', 'settings') %}
                     {% if not discord_webhook_set %}
                         <span class="side-nav__warn tooltip"
-                              data-tooltip="No Discord webhook set, notifications will not be sent">
-                            {{ icon("triangle-alert") }}
-                        </span>
+                              data-tooltip="No Discord webhook set, notifications will not be sent">{{ icon("triangle-alert") }}</span>
                     {% endif %}
                 {% endcall %}
 
                 <div class="side-nav__spacer"></div>
 
                 <form method="post" action="{{ url_for('logout') }}">
-                    <button type="submit">{{ icon("log-out") }} <span>Sign out</span></button>
+                    <button type="submit">
+                        {{ icon("log-out") }} <span>Sign out</span>
+                    </button>
                 </form>
             </nav>
         </aside>

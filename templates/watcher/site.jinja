@@ -1,40 +1,56 @@
 {% extends "base.jinja" %}
+
 {% from "_macros.jinja" import icon %}
 
 {% block title %}{{ site.name }}{% endblock %}
 
 {% block content %}
     <ol class="breadcrumb" aria-label="Breadcrumb">
-        <li><a href="{{ url_for('watcher.index') }}">Dashboard</a></li>
-        <li><span aria-current="page">{{ site.name }}</span></li>
+        <li>
+            <a href="{{ url_for('watcher.index') }}">Dashboard</a>
+        </li>
+        <li>
+            <span aria-current="page">{{ site.name }}</span>
+        </li>
     </ol>
 
     <div class="page-head">
         <h1>{{ site.name }}</h1>
         <div class="page-head__actions">
-            <a href="{{ site.url }}" class="button button--ghost" target="_blank" rel="noopener noreferrer">
-                {{ icon("external-link") }} Visit
-            </a>
+            <a href="{{ site.url }}"
+               class="button button--ghost"
+               target="_blank"
+               rel="noopener noreferrer">{{ icon("external-link") }} Visit</a>
             <form method="post"
                   action="{{ url_for('watcher.delete', site_id=site.id) }}"
                   onsubmit="return confirm('Remove {{ site.name }}?')">
-                <button type="submit" class="button button--danger button--ghost">
-                    {{ icon("trash-2") }} Remove
-                </button>
+                <button type="submit" class="button button--danger button--ghost">{{ icon("trash-2") }} Remove</button>
             </form>
         </div>
     </div>
 
-    <form method="post" action="{{ url_for('watcher.update', site_id=site.id) }}" class="form">
+    <form method="post"
+          action="{{ url_for('watcher.update', site_id=site.id) }}"
+          class="form">
         <section class="form__section">
             <h2>Site settings</h2>
             <div class="field">
                 <label class="field__label" for="name">Name</label>
-                <input class="field__control field__control--full" type="text" id="name" name="name" value="{{ site.name }}" required />
+                <input class="field__control field__control--full"
+                       type="text"
+                       id="name"
+                       name="name"
+                       value="{{ site.name }}"
+                       required />
             </div>
             <div class="field">
                 <label class="field__label" for="url">URL</label>
-                <input class="field__control field__control--full" type="url" id="url" name="url" value="{{ site.url }}" required />
+                <input class="field__control field__control--full"
+                       type="url"
+                       id="url"
+                       name="url"
+                       value="{{ site.url }}"
+                       required />
             </div>
             <div class="field">
                 <label class="field__label" for="check_interval">Check interval (seconds)</label>
@@ -53,4 +69,5 @@
     </form>
 
     {% include "watcher/islands/history.jinja" %}
+
 {% endblock %}

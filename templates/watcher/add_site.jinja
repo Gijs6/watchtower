@@ -1,12 +1,17 @@
 {% extends "base.jinja" %}
+
 {% from "_macros.jinja" import icon %}
 
 {% block title %}Add site{% endblock %}
 
 {% block content %}
     <ol class="breadcrumb" aria-label="Breadcrumb">
-        <li><a href="{{ url_for('watcher.index') }}">Dashboard</a></li>
-        <li><span aria-current="page">Add site</span></li>
+        <li>
+            <a href="{{ url_for('watcher.index') }}">Dashboard</a>
+        </li>
+        <li>
+            <span aria-current="page">Add site</span>
+        </li>
     </ol>
 
     <div class="page-head">
