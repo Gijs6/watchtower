@@ -34,10 +34,10 @@
                                 {% set level = "empty" %}
                                 {% set tip = "No data, " ~ when %}
                             {% else %}
-                                {% if bucket.errors %}
-                                    {% set level = "error" %}
-                                {% elif bucket.changes %}
+                                {% if bucket.changes %}
                                     {% set level = "changed" %}
+                                {% elif bucket.errors %}
+                                    {% set level = "error" %}
                                 {% else %}
                                     {% set level = "ok" %}
                                 {% endif %}
