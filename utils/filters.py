@@ -24,13 +24,17 @@ def timeago_filter(value):
     if value is None:
         return "never"
     secs = int((datetime.now(timezone.utc) - value).total_seconds())
+    future = secs < 0
+    secs = abs(secs)
     if secs < 60:
-        return f"{secs}s ago"
-    if secs < 3600:
-        return f"{secs // 60}m ago"
-    if secs < 86400:
-        return f"{secs // 3600}h ago"
-    return f"{secs // 86400}d ago"
+        span = f"{secs}s"
+    elif secs < 3600:
+        span = f"{secs // 60}m"
+    elif secs < 86400:
+        span = f"{secs // 3600}h"
+    else:
+        span = f"{secs // 86400}d"
+    return f"in {span}" if future else f"{span} ago"
 
 
 def to_iso_filter(value):

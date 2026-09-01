@@ -1,6 +1,6 @@
 import secrets
 import string
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -26,6 +26,17 @@ class Site(db.Model):
     snapshots = db.relationship(
         "Snapshot", backref="site", cascade="all, delete-orphan", lazy="dynamic"
     )
+
+    @property
+    def next_check_at(self):
+        if not self.is_active:
+            return None
+        if self.last_checked_at is None:
+            return datetime.now(timezone.utc)
+        last = self.last_checked_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=timezone.utc)
+        return last + timedelta(seconds=self.check_interval)
 
     def status(self, latest):
         if not self.is_active:

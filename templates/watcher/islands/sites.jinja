@@ -70,6 +70,15 @@
                                 <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
                             </dd>
                         </div>
+                        <div>
+                            <dt>Next check</dt>
+                            <dd>
+                                {% if site.is_active %}
+                                    <time data-live datetime="{{ site.next_check_at | to_iso }}">{{ site.next_check_at | timeago }}</time>
+                                {%- else %}paused
+                                {% endif %}
+                            </dd>
+                        </div>
                     </dl>
 
                     <div class="watch-card__actions">
