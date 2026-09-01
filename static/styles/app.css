@@ -192,9 +192,8 @@
 }
 
 .tl-bar {
-    position: relative;
     flex: 1;
-    border-radius: 2px;
+    border-radius: var(--radius);
     background: var(--gray-2);
 }
 .tl-bar--ok {
@@ -206,24 +205,6 @@
 .tl-bar--error {
     background: var(--warn);
 }
-.tl-bar[data-tip]:hover::after {
-    content: attr(data-tip);
-    position: absolute;
-    inset-block-end: calc(100% + var(--sp-2xs));
-    inset-inline-start: 50%;
-    transform: translateX(-50%);
-    z-index: var(--z-tooltip);
-    inline-size: max-content;
-    max-inline-size: 16rem;
-    padding: var(--sp-3xs) var(--sp-xs);
-    font-size: var(--t--1);
-    line-height: 1.4;
-    color: var(--bg);
-    background: var(--gray-9);
-    border-radius: var(--radius);
-    pointer-events: none;
-}
-
 .check-history > h2 {
     margin-block-end: var(--sp-md);
 }

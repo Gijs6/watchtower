@@ -53,7 +53,7 @@
                                     {% set tip = "No changes, " ~ when %}
                                 {% endif %}
                             {% endif %}
-                            <span class="tl-bar tl-bar--{{ level }}" data-tip="{{ tip }}"></span>
+                            <span class="tl-bar tl-bar--{{ level }} tooltip" data-tooltip="{{ tip }}"></span>
                         {% endfor %}
                     </div>
 
