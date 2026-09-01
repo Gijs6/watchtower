@@ -29,6 +29,8 @@
                             <summary>{{ icon("chevron-down") }} Show diff</summary>
                             {{ snap.diff_snippet | diff_html }}
                         </details>
+                    {% else %}
+                        <p class="check-history__note">Change detected, diff not available.</p>
                     {% endif %}
                 </li>
             {% endfor %}

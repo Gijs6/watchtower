@@ -13,14 +13,7 @@
     {% else %}
         <ol class="check-history__list">
             {% for snap, count, oldest in snapshots %}
-                {% if snap.error %}
-                    {% set kind = "error" %}
-                {% elif snap.changed %}
-                    {% set kind = "changed" %}
-                {% else %}
-                    {% set kind = "ok" %}
-                {% endif %}
-                <li class="check-history__entry check-history__entry--{{ kind }}">
+                <li class="check-history__entry check-history__entry--{{ snap.outcome }}">
                     <div class="check-history__head">
                         <span class="check-history__dot" aria-hidden="true"></span>
                         <span class="check-history__time">
@@ -30,9 +23,11 @@
                                 {{ snap.captured_at | strftime }}
                             {%- endif -%}
                         </span>
-                        {% if kind == "error" %}
-                            <span class="badge badge--warn">{{ icon("triangle-alert") }} Error</span>
-                        {% elif kind == "changed" %}
+                        {% if snap.outcome == "error" %}
+                            <span class="badge badge--warn">{{ icon("triangle-alert") }} Error
+                                {% if count > 1 %}&times;{{ count }}{% endif %}
+                            </span>
+                        {% elif snap.outcome == "changed" %}
                             <span class="badge badge--bad">{{ icon("zap") }} Changed</span>
                         {% else %}
                             <span class="badge badge--ok">{{ icon("check") }} No change
@@ -41,13 +36,15 @@
                         {% endif %}
                     </div>
 
-                    {% if snap.error %}
+                    {% if snap.outcome == "error" %}
                         <p class="check-history__error">{{ snap.error }}</p>
-                    {% elif snap.changed and snap.diff_snippet %}
+                    {% elif snap.outcome == "changed" and snap.diff_snippet %}
                         <details class="diff-disclosure">
                             <summary>{{ icon("chevron-down") }} Show diff</summary>
                             {{ snap.diff_snippet | diff_html }}
                         </details>
+                    {% elif snap.outcome == "changed" %}
+                        <p class="check-history__note">Change detected, diff not available.</p>
                     {% endif %}
                 </li>
             {% endfor %}

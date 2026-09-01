@@ -40,6 +40,13 @@ def to_iso_filter(value):
     return value.isoformat()
 
 
+def is_recent_filter(value, hours=1):
+    value = ensure_tz(value)
+    if value is None:
+        return False
+    return (datetime.now(timezone.utc) - value).total_seconds() < hours * 3600
+
+
 def _diff_side(mod, text):
     inner = "" if text is None else html_module.escape(text)
     return f'<div class="diff__side diff__side--{mod}">{inner}</div>'
@@ -94,6 +101,7 @@ FILTERS = {
     "strftime": strftime_filter,
     "timeago": timeago_filter,
     "to_iso": to_iso_filter,
+    "is_recent": is_recent_filter,
     "diff_html": diff_html_filter,
 }
 

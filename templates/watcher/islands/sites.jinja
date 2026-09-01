@@ -12,25 +12,12 @@
     {% else %}
         <ul class="watch-grid">
             {% for site in sites %}
-                {% set snap = latest[site.id] %}
-
-                {% if not site.is_active %}
-                    {% set status = "paused" %}
-                {% elif snap is none %}
-                    {% set status = "pending" %}
-                {% elif snap.error %}
-                    {% set status = "error" %}
-                {% elif snap.changed %}
-                    {% set status = "changed" %}
-                {% else %}
-                    {% set status = "ok" %}
-                {% endif %}
-
-                <li class="watch-card watch-card--{{ status }}">
+                <li class="watch-card watch-card--{{ status[site.id] }}">
                     <div class="watch-card__header">
                         <span class="watch-card__status" aria-hidden="true"></span>
                         <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
                            class="watch-card__name">{{ site.name }}</a>
+                        {% if site.last_changed_at and site.last_changed_at | is_recent %}<span class="badge badge--bad watch-card__flag">{{ icon("zap") }} Changed {{ site.last_changed_at | timeago }}</span>{% endif %}
                     </div>
 
                     <a href="{{ site.url }}"
@@ -40,34 +27,33 @@
 
                     <div class="watch-card__timeline" aria-label="Last 24 hours">
                         {% for bucket in timeline[site.id] %}
-                            {% if bucket is none %}
-                                {% set lvl = "empty" %}
-                            {% elif bucket == 0 %}
-                                {% set lvl = "lvl-0" %}
-                            {% elif bucket == 1 %}
-                                {% set lvl = "lvl-1" %}
-                            {% elif bucket == 2 %}
-                                {% set lvl = "lvl-2" %}
-                            {% else %}
-                                {% set lvl = "lvl-3" %}
-                            {% endif %}
                             {% set h_near = 23 - loop.index0 %}
                             {% set h_far = 24 - loop.index0 %}
-                            {% if h_near == 0 %}
-                                {% set time_label = "last hour" %}
-                            {% else %}
-                                {% set time_label = h_near ~ "-" ~ h_far ~ "h ago" %}
-                            {% endif %}
+                            {% set when = "last hour" if h_near == 0 else h_near ~ "-" ~ h_far ~ "h ago" %}
                             {% if bucket is none %}
-                                {% set tip = "No data, " ~ time_label %}
-                            {% elif bucket == 0 %}
-                                {% set tip = "No changes, " ~ time_label %}
-                            {% elif bucket == 1 %}
-                                {% set tip = "1 change, " ~ time_label %}
+                                {% set level = "empty" %}
+                                {% set tip = "No data, " ~ when %}
                             {% else %}
-                                {% set tip = bucket ~ " changes, " ~ time_label %}
+                                {% if bucket.errors %}
+                                    {% set level = "error" %}
+                                {% elif bucket.changes %}
+                                    {% set level = "changed" %}
+                                {% else %}
+                                    {% set level = "ok" %}
+                                {% endif %}
+                                {% set change_text = "" if not bucket.changes else ("1 change" if bucket.changes == 1 else bucket.changes ~ " changes") %}
+                                {% set error_text = "" if not bucket.errors else ("1 error" if bucket.errors == 1 else bucket.errors ~ " errors") %}
+                                {% if change_text and error_text %}
+                                    {% set tip = change_text ~ ", " ~ error_text ~ ", " ~ when %}
+                                {% elif change_text %}
+                                    {% set tip = change_text ~ ", " ~ when %}
+                                {% elif error_text %}
+                                    {% set tip = error_text ~ ", " ~ when %}
+                                {% else %}
+                                    {% set tip = "No changes, " ~ when %}
+                                {% endif %}
                             {% endif %}
-                            <span class="tl-bar tl-bar--{{ lvl }}" data-tip="{{ tip }}"></span>
+                            <span class="tl-bar tl-bar--{{ level }}" data-tip="{{ tip }}"></span>
                         {% endfor %}
                     </div>
 

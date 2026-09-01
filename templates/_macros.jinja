@@ -11,3 +11,10 @@
 
     </svg>
 {%- endmacro %}
+
+{% macro status_badge(status) -%}
+    {%- set tone = {"up": " badge--ok", "down": " badge--warn"}.get(status, "") -%}
+    {%- set label = {"up": "Up", "down": "Down", "paused": "Paused", "pending": "Pending"}[status] -%}
+    {%- set glyph = {"up": "circle-check", "down": "triangle-alert", "paused": "pause", "pending": "clock"}[status] -%}
+    <span class="badge{{ tone }}">{{ icon(glyph) }} {{ label }}</span>
+{%- endmacro %}

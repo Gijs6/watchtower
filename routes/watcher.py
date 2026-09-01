@@ -9,73 +9,54 @@ from utils.watcher import get_setting, set_setting
 
 watcher_bp = Blueprint("watcher", __name__, url_prefix="/watcher")
 
+TIMELINE_HOURS = 24
 
-@watcher_bp.get("/")
-def index():
+
+def build_timeline(site, now):
+    cutoff = now - timedelta(hours=TIMELINE_HOURS)
+    buckets = [None] * TIMELINE_HOURS
+    snapshots = Snapshot.query.filter(
+        Snapshot.site_id == site.id,
+        Snapshot.captured_at >= cutoff,
+    ).all()
+    for snap in snapshots:
+        ts = snap.captured_at
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        index = (TIMELINE_HOURS - 1) - int((now - ts).total_seconds() / 3600)
+        if not 0 <= index < TIMELINE_HOURS:
+            continue
+        bucket = buckets[index] or {"changes": 0, "errors": 0}
+        if snap.error:
+            bucket["errors"] += 1
+        elif snap.changed:
+            bucket["changes"] += 1
+        buckets[index] = bucket
+    return buckets
+
+
+def dashboard_data():
     sites = Site.query.order_by(Site.name).all()
+    now = datetime.now(timezone.utc)
     latest = {
         site.id: Snapshot.query.filter_by(site_id=site.id)
         .order_by(Snapshot.captured_at.desc())
         .first()
         for site in sites
     }
-    now = datetime.now(timezone.utc)
-    cutoff = now - timedelta(hours=24)
-    timeline = {}
-    for site in sites:
-        buckets = [None] * 24
-        snaps = Snapshot.query.filter(
-            Snapshot.site_id == site.id,
-            Snapshot.captured_at >= cutoff,
-        ).all()
-        for snap in snaps:
-            ts = snap.captured_at
-            if ts.tzinfo is None:
-                ts = ts.replace(tzinfo=timezone.utc)
-            bucket = 23 - int((now - ts).total_seconds() / 3600)
-            if 0 <= bucket < 24:
-                if buckets[bucket] is None:
-                    buckets[bucket] = 0
-                if snap.changed:
-                    buckets[bucket] += 1
-        timeline[site.id] = buckets
-    return render_template(
-        "watcher/index.jinja", sites=sites, latest=latest, timeline=timeline
-    )
+    status = {site.id: site.status(latest[site.id]) for site in sites}
+    timeline = {site.id: build_timeline(site, now) for site in sites}
+    return {"sites": sites, "status": status, "timeline": timeline}
+
+
+@watcher_bp.get("/")
+def index():
+    return render_template("watcher/index.jinja", **dashboard_data())
 
 
 @watcher_bp.get("/island")
 def island():
-    sites = Site.query.order_by(Site.name).all()
-    latest = {
-        site.id: Snapshot.query.filter_by(site_id=site.id)
-        .order_by(Snapshot.captured_at.desc())
-        .first()
-        for site in sites
-    }
-    now = datetime.now(timezone.utc)
-    cutoff = now - timedelta(hours=24)
-    timeline = {}
-    for site in sites:
-        buckets = [None] * 24
-        snaps = Snapshot.query.filter(
-            Snapshot.site_id == site.id,
-            Snapshot.captured_at >= cutoff,
-        ).all()
-        for snap in snaps:
-            ts = snap.captured_at
-            if ts.tzinfo is None:
-                ts = ts.replace(tzinfo=timezone.utc)
-            bucket = 23 - int((now - ts).total_seconds() / 3600)
-            if 0 <= bucket < 24:
-                if buckets[bucket] is None:
-                    buckets[bucket] = 0
-                if snap.changed:
-                    buckets[bucket] += 1
-        timeline[site.id] = buckets
-    return render_template(
-        "watcher/islands/sites.jinja", sites=sites, latest=latest, timeline=timeline
-    )
+    return render_template("watcher/islands/sites.jinja", **dashboard_data())
 
 
 @watcher_bp.get("/sites/add")
@@ -144,55 +125,59 @@ def update(site_id):
     return redirect(url_for("watcher.detail", site_id=site.id))
 
 
-def _squash_snapshots(snapshots):
-    def is_squashable(s):
-        return not s.changed
+def squash_snapshots(snapshots):
+    """Collapse consecutive runs of the same outcome into one row with a count.
+
+    Each detected change stays on its own row. Consecutive unchanged checks, or
+    consecutive errors sharing the same message, are merged and counted.
+    """
+
+    def mergeable(first, other):
+        if first.outcome != other.outcome or first.outcome == "changed":
+            return False
+        if first.outcome == "error":
+            return first.error == other.error
+        return True
 
     result = []
     i = 0
     while i < len(snapshots):
         snap = snapshots[i]
-        if is_squashable(snap):
-            count = 1
-            while i + count < len(snapshots) and is_squashable(snapshots[i + count]):
-                count += 1
-            oldest = snapshots[i + count - 1]
-            result.append((snap, count, oldest))
-            i += count
-        else:
-            result.append((snap, 1, snap))
-            i += 1
+        count = 1
+        while i + count < len(snapshots) and mergeable(snap, snapshots[i + count]):
+            count += 1
+        result.append((snap, count, snapshots[i + count - 1]))
+        i += count
     return result
 
 
-@watcher_bp.get("/sites/<site_id>")
-def detail(site_id):
-    site = db.get_or_404(Site, site_id)
+def history_data(site):
     snapshots = (
         Snapshot.query.filter_by(site_id=site.id)
         .order_by(Snapshot.captured_at.desc())
         .limit(200)
         .all()
     )
+    return {"site": site, "snapshots": squash_snapshots(snapshots)}
+
+
+@watcher_bp.get("/sites/<site_id>")
+def detail(site_id):
+    site = db.get_or_404(Site, site_id)
+    latest = (
+        Snapshot.query.filter_by(site_id=site.id)
+        .order_by(Snapshot.captured_at.desc())
+        .first()
+    )
     return render_template(
-        "watcher/site.jinja", site=site, snapshots=_squash_snapshots(snapshots)
+        "watcher/site.jinja", status=site.status(latest), **history_data(site)
     )
 
 
 @watcher_bp.get("/sites/<site_id>/history")
 def history_island(site_id):
     site = db.get_or_404(Site, site_id)
-    snapshots = (
-        Snapshot.query.filter_by(site_id=site.id)
-        .order_by(Snapshot.captured_at.desc())
-        .limit(200)
-        .all()
-    )
-    return render_template(
-        "watcher/islands/history.jinja",
-        site=site,
-        snapshots=_squash_snapshots(snapshots),
-    )
+    return render_template("watcher/islands/history.jinja", **history_data(site))
 
 
 @watcher_bp.get("/notifications/events")

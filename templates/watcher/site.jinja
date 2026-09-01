@@ -1,6 +1,6 @@
 {% extends "base.jinja" %}
 
-{% from "_macros.jinja" import icon %}
+{% from "_macros.jinja" import icon, status_badge %}
 
 {% block title %}{{ site.name }}{% endblock %}
 
@@ -15,7 +15,10 @@
     </ol>
 
     <div class="page-head">
-        <h1>{{ site.name }}</h1>
+        <div class="page-head__heading">
+            <h1>{{ site.name }}</h1>
+            {{ status_badge(status) }}
+        </div>
         <div class="page-head__actions">
             <a href="{{ site.url }}"
                class="button button--ghost"

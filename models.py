@@ -27,6 +27,15 @@ class Site(db.Model):
         "Snapshot", backref="site", cascade="all, delete-orphan", lazy="dynamic"
     )
 
+    def status(self, latest):
+        if not self.is_active:
+            return "paused"
+        if latest is None:
+            return "pending"
+        if latest.error:
+            return "down"
+        return "up"
+
 
 class Snapshot(db.Model):
     id = db.Column(db.String(16), primary_key=True, default=generate_id)
@@ -37,6 +46,14 @@ class Snapshot(db.Model):
     changed = db.Column(db.Boolean, nullable=False, default=False)
     diff_snippet = db.Column(db.Text, nullable=True)
     error = db.Column(db.String, nullable=True)
+
+    @property
+    def outcome(self):
+        if self.error:
+            return "error"
+        if self.changed:
+            return "changed"
+        return "unchanged"
 
 
 class Setting(db.Model):

@@ -112,13 +112,9 @@ def do_check(site):
     )
 
     changed = prev is not None and prev.content_hash != content_hash
-    diff_snippet = (
-        compute_diff_snippet(prev.content, text)
-        if changed and prev.content and is_text
-        else "Diff not available."
-        if changed
-        else None
-    )
+    diff_snippet = None
+    if changed and prev.content and is_text:
+        diff_snippet = compute_diff_snippet(prev.content, text)
 
     db.session.add(
         Snapshot(
