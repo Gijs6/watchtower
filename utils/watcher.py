@@ -14,7 +14,7 @@ worker_thread = None
 worker_lock = threading.Lock()
 
 CONTENT_MAX_LEN = 50000
-SNAPSHOT_RETENTION = timedelta(hours=48)
+SNAPSHOT_RETENTION = timedelta(days=7)
 CHECK_LOOP_INTERVAL = 10
 
 
