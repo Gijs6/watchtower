@@ -313,7 +313,6 @@
 .diff-disclosure summary .icon {
     inline-size: 1rem;
     block-size: 1rem;
-    transition: transform var(--transition);
 }
 .diff-disclosure[open] summary {
     margin-block-end: 0;
