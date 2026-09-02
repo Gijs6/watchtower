@@ -37,6 +37,24 @@ def timeago_filter(value):
     return f"in {span}" if future else f"{span} ago"
 
 
+def timeuntil_filter(value):
+    value = ensure_tz(value)
+    if value is None:
+        return "never"
+    secs = int((value - datetime.now(timezone.utc)).total_seconds())
+    if secs <= 0:
+        return "due now"
+    if secs < 60:
+        span = f"{secs}s"
+    elif secs < 3600:
+        span = f"{secs // 60}m"
+    elif secs < 86400:
+        span = f"{secs // 3600}h"
+    else:
+        span = f"{secs // 86400}d"
+    return f"in {span}"
+
+
 def to_iso_filter(value):
     value = ensure_tz(value)
     if value is None:
@@ -104,6 +122,7 @@ def diff_html_filter(diff_text):
 FILTERS = {
     "strftime": strftime_filter,
     "timeago": timeago_filter,
+    "timeuntil": timeuntil_filter,
     "to_iso": to_iso_filter,
     "is_recent": is_recent_filter,
     "diff_html": diff_html_filter,

@@ -74,7 +74,7 @@
                             <dt>Next check</dt>
                             <dd>
                                 {% if site.is_active %}
-                                    <time data-live datetime="{{ site.next_check_at | to_iso }}">{{ site.next_check_at | timeago }}</time>
+                                    <time data-live="until" datetime="{{ site.next_check_at | to_iso }}">{{ site.next_check_at | timeuntil }}</time>
                                 {%- else %}paused
                                 {% endif %}
                             </dd>

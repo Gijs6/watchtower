@@ -67,10 +67,22 @@
                 return future ? 'in ' + span : span + ' ago';
             }
 
+            function timeuntil(dt) {
+                let s = Math.floor((dt - Date.now()) / 1000);
+                if (s <= 0) return 'due now';
+                let span;
+                if (s < 60) span = s + 's';
+                else if (s < 3600) span = Math.floor(s / 60) + 'm';
+                else if (s < 86400) span = Math.floor(s / 3600) + 'h';
+                else span = Math.floor(s / 86400) + 'd';
+                return 'in ' + span;
+            }
+
             function updateLiveTimes() {
                 document.querySelectorAll('time[data-live]').forEach(function(el) {
                     const dt = new Date(el.getAttribute('datetime'));
-                    if (!isNaN(dt)) el.textContent = timeago(dt);
+                    if (isNaN(dt)) return;
+                    el.textContent = el.dataset.live === 'until' ? timeuntil(dt) : timeago(dt);
                 });
             }
             updateLiveTimes();
