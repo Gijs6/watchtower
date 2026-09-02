@@ -2,7 +2,7 @@ import difflib
 import hashlib
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import requests
 from bs4 import BeautifulSoup
@@ -14,7 +14,7 @@ worker_thread = None
 worker_lock = threading.Lock()
 
 CONTENT_MAX_LEN = 50000
-SNAPSHOT_LIMIT = 50
+SNAPSHOT_RETENTION = timedelta(hours=48)
 CHECK_LOOP_INTERVAL = 10
 
 
@@ -132,14 +132,17 @@ def do_check(site):
         site.last_changed_at = now
     db.session.commit()
 
-    old_snaps = (
-        Snapshot.query.filter_by(site_id=site.id)
-        .order_by(Snapshot.captured_at.desc())
-        .offset(SNAPSHOT_LIMIT)
-        .all()
-    )
-    for old in old_snaps:
-        db.session.delete(old)
+    Snapshot.query.filter(
+        Snapshot.site_id == site.id,
+        Snapshot.content.isnot(None),
+        Snapshot.captured_at < now,
+    ).update({Snapshot.content: None}, synchronize_session=False)
+
+    cutoff = now - SNAPSHOT_RETENTION
+    Snapshot.query.filter(
+        Snapshot.site_id == site.id,
+        Snapshot.captured_at < cutoff,
+    ).delete(synchronize_session=False)
     db.session.commit()
 
     if changed:

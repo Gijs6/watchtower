@@ -15,11 +15,15 @@ TIMELINE_HOURS = 24
 def build_timeline(site, now):
     cutoff = now - timedelta(hours=TIMELINE_HOURS)
     buckets = [None] * TIMELINE_HOURS
-    snapshots = Snapshot.query.filter(
-        Snapshot.site_id == site.id,
-        Snapshot.captured_at >= cutoff,
-    ).all()
-    for snap in snapshots:
+    rows = (
+        db.session.query(Snapshot.captured_at, Snapshot.error, Snapshot.changed)
+        .filter(
+            Snapshot.site_id == site.id,
+            Snapshot.captured_at >= cutoff,
+        )
+        .all()
+    )
+    for snap in rows:
         ts = snap.captured_at
         if ts.tzinfo is None:
             ts = ts.replace(tzinfo=timezone.utc)
