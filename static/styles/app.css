@@ -10,7 +10,6 @@
     align-self: center;
     font-size: var(--t-1);
     font-weight: var(--weight-heavy);
-    letter-spacing: -0.02em;
     color: var(--accent-text);
 }
 .auth__brand .icon {
