@@ -20,14 +20,6 @@
     inline-size: 100%;
 }
 
-.error__code {
-    font-family: var(--font-mono);
-    font-size: var(--t-4);
-    line-height: 1;
-    color: var(--faint);
-    margin-block-end: var(--sp-sm);
-}
-
 .page--sidebar .page__aside {
     display: flex;
     flex-direction: column;
