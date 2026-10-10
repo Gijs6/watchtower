@@ -1,29 +1,18 @@
 {% extends "skeleton.jinja" %}
 
-{% from "_macros.jinja" import icon %}
-
-{% block body_class %}page page--sidebar is-drawer{% endblock %}
-
 {% macro nav_link(endpoint, label, name) %}
     <a href="{{ url_for(endpoint) }}"
        {% if request.endpoint == endpoint %}aria-current="page"{% endif %}>
-        {{ icon(name) }} <span>{{ label }}</span>
+        <span>{{ label }}</span>
         {% if caller %}{{ caller() }}{% endif %}
     </a>
 {% endmacro %}
 
 {% block body_content %}
-    <header class="app-bar">
-        <button type="button" class="app-bar__menu-toggle" aria-label="Menu">{{ icon("menu") }}</button>
-        <a href="{{ url_for('index') }}" class="wordmark">
-            <span class="wordmark__mark">{{ icon("tower-control") }}</span>
-            <span class="wordmark__text">Watchtower</span>
-        </a>
-    </header>
-
-    <div class="page__body">
-        <aside class="page__aside">
-            <nav class="side-nav" aria-label="Main navigation">
+    <header class="navbar">
+        <div class="navbar__inner">
+            <a href="{{ url_for('index') }}" class="navbar__brand">Watchtower</a>
+            <nav class="navbar__links" aria-label="Main navigation">
                 {{ nav_link('watcher.index', 'Dashboard', 'house') }}
 
                 {% call nav_link('watcher.notifications', 'Notifications', 'bell') %}
@@ -33,32 +22,29 @@
 
                 {% call nav_link('watcher.settings', 'Settings', 'settings') %}
                     {% if not discord_webhook_set %}
-                        <span class="side-nav__warn tooltip"
-                              data-tooltip="No Discord webhook set, notifications will not be sent">{{ icon("triangle-alert") }}</span>
+                        <span class="nav-warn tooltip"
+                              data-tooltip="No Discord webhook set, notifications will not be sent">!</span>
                     {% endif %}
                 {% endcall %}
 
-                <div class="side-nav__spacer"></div>
-
                 <form method="post" action="{{ url_for('logout') }}">
                     <button type="submit">
-                        {{ icon("log-out") }} <span>Sign out</span>
+                        <span>Sign out</span>
                     </button>
                 </form>
             </nav>
-        </aside>
+        </div>
+    </header>
 
-        <main class="page__main">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
 
-    <footer class="site-footer">
-        <p class="site-footer__meta">
-            <span class="site-footer__id">
-                <span class="site-footer__mark">{{ icon("tower-control") }}</span>
-                <b class="site-footer__name">Watchtower</b> by <a class="site-footer__by" href="https://gijs6.nl">Gijs6</a>
-            </span>
+    <footer class="footer">
+        <p>
+            <a href="{{ url_for('index') }}">Watchtower</a> by <a href="https://gijs6.nl">Gijs6</a>
+        </p>
+        <p>
             <a href="https://unlicense.org" rel="license">Unlicensed</a>
         </p>
     </footer>
