@@ -1,99 +1,108 @@
-{% from "_macros.jinja" import icon %}
+{% from "_macros.jinja" import status_badge %}
 <div id="sites-island"
+     class="panel"
      hx-get="{{ url_for('watcher.island') }}"
      hx-trigger="every 10s"
      hx-swap="outerHTML">
+    <h2 class="panel__heading">
+        Sites <a href="{{ url_for('watcher.add_site') }}" class="btn btn--sm">Add site</a>
+    </h2>
     {% if not sites %}
         <div class="empty">
-            {{ icon('tower-control', 'empty__icon') }}
             <p class="empty__title">No sites yet</p>
             <p class="empty__text">Add one with the button above and Watchtower starts checking it.</p>
         </div>
     {% else %}
-        <ul class="watch-grid">
-            {% for site in sites %}
-                <li class="watch-card watch-card--{{ status[site.id] }}">
-                    <div class="watch-card__header">
-                        <span class="watch-card__status" aria-hidden="true"></span>
-                        <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
-                           class="watch-card__name">{{ site.name }}</a>
-                        {% if site.last_changed_at and site.last_changed_at | is_recent %}<span class="badge badge--bad watch-card__flag">{{ icon("zap") }} Changed {{ site.last_changed_at | timeago }}</span>{% endif %}
-                    </div>
-
-                    <a href="{{ site.url }}"
-                       class="watch-card__url"
-                       target="_blank"
-                       rel="noopener noreferrer">{{ site.url }}</a>
-
-                    <div class="watch-card__timeline" aria-label="Last 24 hours">
-                        {% for bucket in timeline[site.id] %}
-                            {% set h_near = 23 - loop.index0 %}
-                            {% set h_far = 24 - loop.index0 %}
-                            {% set when = "last hour" if h_near == 0 else h_near ~ "-" ~ h_far ~ "h ago" %}
-                            {% if bucket is none %}
-                                {% set level = "empty" %}
-                                {% set tip = "No data, " ~ when %}
-                            {% else %}
-                                {% if bucket.changes %}
-                                    {% set level = "changed" %}
-                                {% elif bucket.errors %}
-                                    {% set level = "error" %}
-                                {% else %}
-                                    {% set level = "ok" %}
-                                {% endif %}
-                                {% set change_text = "" if not bucket.changes else ("1 change" if bucket.changes == 1 else bucket.changes ~ " changes") %}
-                                {% set error_text = "" if not bucket.errors else ("1 error" if bucket.errors == 1 else bucket.errors ~ " errors") %}
-                                {% if change_text and error_text %}
-                                    {% set tip = change_text ~ ", " ~ error_text ~ ", " ~ when %}
-                                {% elif change_text %}
-                                    {% set tip = change_text ~ ", " ~ when %}
-                                {% elif error_text %}
-                                    {% set tip = error_text ~ ", " ~ when %}
-                                {% else %}
-                                    {% set tip = "No changes, " ~ when %}
-                                {% endif %}
-                            {% endif %}
-                            <span class="tl-bar tl-bar--{{ level }} tooltip" data-tooltip="{{ tip }}"></span>
-                        {% endfor %}
-                    </div>
-
-                    <dl class="watch-card__meta">
-                        <div>
-                            <dt>Checked</dt>
-                            <dd>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Status</th>
+                        <th>Last 24 hours</th>
+                        <th>Checked</th>
+                        <th>Changed</th>
+                        <th>Next check</th>
+                        <th>
+                            <span class="visually-hidden">Actions</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for site in sites %}
+                        <tr>
+                            <td class="site-cell">
+                                <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
+                                   class="site-cell__name">{{ site.name }}</a>
+                                <a href="{{ site.url }}"
+                                   class="site-cell__url"
+                                   target="_blank"
+                                   rel="noopener noreferrer">{{ site.url }}</a>
+                            </td>
+                            <td>
+                                {{ status_badge(status[site.id]) }}
+                                {% if site.last_changed_at and site.last_changed_at | is_recent %}<small class="site-cell__flag">Changed {{ site.last_changed_at | timeago }}</small>{% endif %}
+                            </td>
+                            <td>
+                                <div class="timeline" aria-label="Last 24 hours">
+                                    {% for bucket in timeline[site.id] %}
+                                        {% set h_near = 23 - loop.index0 %}
+                                        {% set h_far = 24 - loop.index0 %}
+                                        {% set when = "last hour" if h_near == 0 else h_near ~ "-" ~ h_far ~ "h ago" %}
+                                        {% if bucket is none %}
+                                            {% set level = "empty" %}
+                                            {% set tip = "No data, " ~ when %}
+                                        {% else %}
+                                            {% if bucket.changes %}
+                                                {% set level = "changed" %}
+                                            {% elif bucket.errors %}
+                                                {% set level = "error" %}
+                                            {% else %}
+                                                {% set level = "ok" %}
+                                            {% endif %}
+                                            {% set change_text = "" if not bucket.changes else ("1 change" if bucket.changes == 1 else bucket.changes ~ " changes") %}
+                                            {% set error_text = "" if not bucket.errors else ("1 error" if bucket.errors == 1 else bucket.errors ~ " errors") %}
+                                            {% if change_text and error_text %}
+                                                {% set tip = change_text ~ ", " ~ error_text ~ ", " ~ when %}
+                                            {% elif change_text %}
+                                                {% set tip = change_text ~ ", " ~ when %}
+                                            {% elif error_text %}
+                                                {% set tip = error_text ~ ", " ~ when %}
+                                            {% else %}
+                                                {% set tip = "No changes, " ~ when %}
+                                            {% endif %}
+                                        {% endif %}
+                                        <span class="tl-bar tl-bar--{{ level }} tooltip" data-tooltip="{{ tip }}"></span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
                                 <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt>Changed</dt>
-                            <dd>
+                            </td>
+                            <td>
                                 <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt>Next check</dt>
-                            <dd>
+                            </td>
+                            <td>
                                 {% if site.is_active %}
                                     <time data-live="until" datetime="{{ site.next_check_at | to_iso }}">{{ site.next_check_at | timeuntil }}</time>
                                 {%- else %}paused
                                 {% endif %}
-                            </dd>
-                        </div>
-                    </dl>
-
-                    <div class="watch-card__actions">
-                        <form method="post"
-                              action="{{ url_for('watcher.toggle', site_id=site.id) }}">
-                            <button type="submit" class="button button--ghost button--sm">
-                                {% if site.is_active %}
-                                    {{ icon("pause") }} Pause
-                                {%- else %}{{ icon("play") }} Resume
-                                {% endif %}
-                            </button>
-                        </form>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+                            </td>
+                            <td>
+                                <form method="post"
+                                      action="{{ url_for('watcher.toggle', site_id=site.id) }}">
+                                    <button type="submit" class="btn btn--sm">
+                                        {% if site.is_active %}
+                                            Pause
+                                        {%- else %}Resume
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 </div>
