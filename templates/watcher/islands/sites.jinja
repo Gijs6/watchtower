@@ -23,7 +23,7 @@
                         <th>Checked</th>
                         <th>Changed</th>
                         <th>Next check</th>
-                        <th>
+                        <th class="table__actions">
                             <span class="visually-hidden">Actions</span>
                         </th>
                     </tr>
@@ -88,7 +88,7 @@
                                 {%- else %}paused
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="table__actions">
                                 <form method="post"
                                       action="{{ url_for('watcher.toggle', site_id=site.id) }}">
                                     <button type="submit" class="btn btn--sm">
