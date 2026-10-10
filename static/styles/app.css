@@ -4,15 +4,15 @@
 }
 
 .site-summary {
-    margin-block-end: 15px;
+    margin-block-end: var(--space-xl);
 }
 
 .site-actions {
-    margin-block-end: 20px;
+    margin-block-end: var(--space-2xl);
 }
 
 .sign-in__title {
-    margin-block-start: 10px;
+    margin-block-start: var(--space-md);
 }
 
 .site-cell__name {
@@ -37,7 +37,7 @@
 
 .timeline {
     display: flex;
-    gap: 1px;
+    gap: var(--space-3xs);
     block-size: 15px;
     min-inline-size: 144px;
 }
@@ -79,7 +79,7 @@
     summary {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--space-2xs);
         color: var(--link);
         list-style: none;
     }
@@ -87,7 +87,7 @@
         display: none;
     }
     &[open] summary {
-        margin-block-end: 8px;
+        margin-block-end: var(--space-sm);
     }
 }
 
@@ -101,7 +101,7 @@
 }
 
 .diff__hunk {
-    padding: 2px 8px;
+    padding: var(--space-3xs) var(--space-sm);
     color: var(--muted);
     background: var(--pre-bg);
 }
@@ -112,7 +112,7 @@
 }
 
 .diff__side {
-    padding: 1px 8px;
+    padding: var(--space-3xs) var(--space-sm);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 
