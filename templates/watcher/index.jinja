@@ -3,6 +3,10 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+    <div class="page-head">
+        <h1>Dashboard</h1>
+    </div>
+
     {% if not discord_webhook_set %}
         <div class="alert alert--warning">
             No Discord webhook set, notifications will not be sent. <a href="{{ url_for('watcher.settings') }}">Set one in settings</a>.
