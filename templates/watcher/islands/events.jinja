@@ -7,7 +7,6 @@
     {% if not events %}
         <div class="empty">
             <p class="empty__title">No changes detected yet</p>
-            <p>When a monitored page changes, it shows up here.</p>
         </div>
     {% else %}
         <div class="table-wrap">
@@ -26,9 +25,7 @@
                                 <a href="{{ url_for('watcher.detail', site_id=snap.site_id) }}"
                                    class="check-history__site">{{ snap.site.name }}</a>
                             </td>
-                            <td class="check-history__time">
-                                {{ when(snap.captured_at) }}
-                            </td>
+                            <td class="check-history__time">{{ when(snap.captured_at) }}</td>
                             <td class="check-history__details">
                                 {% if snap.diff_snippet %}
                                     <details class="diff-disclosure">
