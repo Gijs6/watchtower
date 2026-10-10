@@ -1,74 +1,55 @@
 {% extends "base.jinja" %}
 
-{% from "_macros.jinja" import icon, status_badge %}
+{% from "_macros.jinja" import status_badge %}
 
 {% block title %}{{ site.name }}{% endblock %}
 
 {% block content %}
-    <ol class="breadcrumb" aria-label="Breadcrumb">
-        <li>
-            <a href="{{ url_for('watcher.index') }}">Dashboard</a>
-        </li>
-        <li>
-            <span aria-current="page">{{ site.name }}</span>
-        </li>
-    </ol>
-
     <div class="page-head">
-        <div class="page-head__heading">
-            <h1>{{ site.name }}</h1>
-            {{ status_badge(status) }}
-        </div>
-        <div class="page-head__actions">
-            <a href="{{ site.url }}"
-               class="button button--ghost"
-               target="_blank"
-               rel="noopener noreferrer">{{ icon("external-link") }} Visit</a>
-            <form method="post"
-                  action="{{ url_for('watcher.delete', site_id=site.id) }}"
-                  onsubmit="return confirm('Remove {{ site.name }}?')">
-                <button type="submit" class="button button--danger button--ghost">{{ icon("trash-2") }} Remove</button>
-            </form>
-        </div>
+        <h1>{{ site.name }} {{ status_badge(status, in_title=true) }}</h1>
+    </div>
+
+    <p class="site-summary">
+        <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>.
+    </p>
+
+    <div class="form__actions site-actions">
+        <a href="{{ site.url }}"
+           class="btn"
+           target="_blank"
+           rel="noopener noreferrer">Visit</a>
+        <form method="post"
+              action="{{ url_for('watcher.delete', site_id=site.id) }}"
+              onsubmit="return confirm('Remove {{ site.name }}?')">
+            <button type="submit" class="btn btn--danger">Remove</button>
+        </form>
     </div>
 
     <form method="post"
-          action="{{ url_for('watcher.update', site_id=site.id) }}"
-          class="form">
-        <section class="form__section">
-            <h2>Site settings</h2>
+          action="{{ url_for('watcher.update', site_id=site.id) }}">
+        <fieldset class="fieldset">
+            <legend>Site settings</legend>
             <div class="field">
                 <label class="field__label" for="name">Name</label>
-                <input class="field__control field__control--full"
-                       type="text"
-                       id="name"
-                       name="name"
-                       value="{{ site.name }}"
-                       required />
+                <input type="text" id="name" name="name" value="{{ site.name }}" required />
             </div>
             <div class="field">
                 <label class="field__label" for="url">URL</label>
-                <input class="field__control field__control--full"
-                       type="url"
-                       id="url"
-                       name="url"
-                       value="{{ site.url }}"
-                       required />
+                <input type="url" id="url" name="url" value="{{ site.url }}" required />
             </div>
-            <div class="field">
+            <div class="field field--narrow">
                 <label class="field__label" for="check_interval">Check interval (seconds)</label>
-                <input class="field__control"
-                       type="number"
+                <input type="number"
                        id="check_interval"
                        name="check_interval"
                        value="{{ site.check_interval }}"
                        min="10"
                        max="86400" />
             </div>
-        </section>
-        <div class="form__actions">
-            <button type="submit" class="button">{{ icon("save") }} Save</button>
-        </div>
+            <div class="form__actions">
+                <button type="submit" class="btn">Save</button>
+            </div>
+        </fieldset>
     </form>
 
     {% include "watcher/islands/history.jinja" %}
