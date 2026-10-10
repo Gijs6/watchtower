@@ -11,10 +11,6 @@
     margin-block-end: var(--space-2xl);
 }
 
-.sign-in__title {
-    margin-block-start: var(--space-md);
-}
-
 .site-cell__name {
     display: block;
     font-weight: 700;

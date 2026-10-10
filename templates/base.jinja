@@ -11,7 +11,7 @@
 {% block body_content %}
     <header class="navbar">
         <div class="navbar__inner">
-            <a href="{{ url_for('index') }}" class="navbar__brand">Watchtower</a>
+            <a href="{{ url_for('index') }}" class="navbar__brand">{% include "mark.svg" %}Watchtower</a>
             <nav class="navbar__links" aria-label="Main navigation">
                 {{ nav_link('watcher.index', 'Dashboard', 'house') }}
 
