@@ -1,7 +1,5 @@
 {% extends "base.jinja" %}
 
-{% from "_macros.jinja" import icon %}
-
 {% block title %}Add site{% endblock %}
 
 {% block content %}
@@ -18,30 +16,27 @@
         <h1>Add site</h1>
     </div>
 
-    <form method="post" action="{{ url_for('watcher.add') }}" class="form">
+    <form method="post" action="{{ url_for('watcher.add') }}">
         <div class="field">
             <label class="field__label" for="site-name">Name</label>
-            <input class="field__control field__control--full"
-                   type="text"
+            <input type="text"
                    id="site-name"
                    name="name"
                    placeholder="Generated from the URL"
                    value="{{ name or '' }}" />
         </div>
         <div class="field">
-            <label class="field__label field__label--required" for="site-url">URL</label>
-            <input class="field__control field__control--full"
-                   type="url"
+            <label class="field__label" for="site-url">URL</label>
+            <input type="url"
                    id="site-url"
                    name="url"
                    placeholder="https://example.com"
                    value="{{ url or '' }}"
                    required />
         </div>
-        <div class="field">
+        <div class="field field--narrow">
             <label class="field__label" for="site-interval">Check interval (seconds)</label>
-            <input class="field__control"
-                   type="number"
+            <input type="number"
                    id="site-interval"
                    name="check_interval"
                    value="{{ interval or 300 }}"
@@ -49,7 +44,7 @@
                    max="86400" />
         </div>
         <div class="form__actions">
-            <button type="submit" class="button">{{ icon("plus") }} Add</button>
+            <button type="submit" class="btn">Add</button>
         </div>
     </form>
 {% endblock %}
