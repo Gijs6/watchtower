@@ -1,5 +1,5 @@
 {% macro status_badge(status, in_title=false) -%}
-    {%- set tone = {"up": " status--ok", "down": " status--warn"}.get(status, "") -%}
+    {%- set tone = {"up": " status--ok", "down": " status--bad"}.get(status, "") -%}
     {%- set label = {"up": "Up", "down": "Down", "paused": "Paused", "pending": "Pending"}[status] -%}
     {%- if in_title -%}
         <span class="status status--title{{ tone }}">({{ label | lower }})</span>
