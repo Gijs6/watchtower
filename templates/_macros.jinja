@@ -1,17 +1,3 @@
-{% macro icon(name, cls="") -%}
-    <svg class="icon{% if cls %} {{ cls }}{% endif %}"
-         viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         stroke-width="2"
-         stroke-linecap="round"
-         stroke-linejoin="round"
-         aria-hidden="true">
-        {% include "icons/" ~ name ~ ".svg" %}
-
-    </svg>
-{%- endmacro %}
-
 {% macro status_badge(status, in_title=false) -%}
     {%- set tone = {"up": " status--ok", "down": " status--warn"}.get(status, "") -%}
     {%- set label = {"up": "Up", "down": "Down", "paused": "Paused", "pending": "Pending"}[status] -%}

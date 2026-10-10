@@ -6,12 +6,6 @@
 
         <title>{%- block title -%}{%- endblock %} - Watchtower</title>
 
-        <link rel="icon"
-              href="{{ url_for('static', filename='favicon.svg') }}"
-              type="image/svg+xml" />
-        <link rel="alternate icon"
-              href="{{ url_for('static', filename='favicon.ico') }}" />
-
         {% set theme = "http://localhost:8000/theme/v1" if config.DEBUG else "https://cdn.gijs6.nl/theme/v1" %}
         <link rel="stylesheet" href="{{ theme }}/all.css" />
         <link rel="stylesheet" href="{{ theme }}/accent/orange.css" />
