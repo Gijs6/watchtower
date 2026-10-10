@@ -72,11 +72,24 @@
                 return 'in ' + span;
             }
 
+            function absolute(dt) {
+                return dt.toLocaleString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
             function updateLiveTimes() {
                 document.querySelectorAll('time[data-live]').forEach(function(el) {
                     const dt = new Date(el.getAttribute('datetime'));
                     if (isNaN(dt)) return;
-                    el.textContent = el.dataset.live === 'until' ? timeuntil(dt) : timeago(dt);
+                    const mode = el.dataset.live;
+                    if (mode === 'abs') el.textContent = absolute(dt);
+                    else if (mode === 'until') el.textContent = absolute(dt) + ' (' + timeuntil(dt) + ')';
+                    else el.textContent = absolute(dt) + ' (' + timeago(dt) + ')';
                 });
             }
             updateLiveTimes();

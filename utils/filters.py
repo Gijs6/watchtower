@@ -12,7 +12,7 @@ def ensure_tz(dt):
     return dt
 
 
-def strftime_filter(value, fmt="%d %b %Y %H:%M"):
+def strftime_filter(value, fmt="%-d %b %Y, %H:%M"):
     value = ensure_tz(value)
     if value is None:
         return "-"
@@ -22,7 +22,7 @@ def strftime_filter(value, fmt="%d %b %Y %H:%M"):
 def timeago_filter(value):
     value = ensure_tz(value)
     if value is None:
-        return "never"
+        return "Never"
     secs = int((datetime.now(timezone.utc) - value).total_seconds())
     future = secs < 0
     secs = abs(secs)
@@ -40,7 +40,7 @@ def timeago_filter(value):
 def timeuntil_filter(value):
     value = ensure_tz(value)
     if value is None:
-        return "never"
+        return "Never"
     secs = int((value - datetime.now(timezone.utc)).total_seconds())
     if secs <= 0:
         return "due now"

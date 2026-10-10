@@ -1,3 +1,4 @@
+{% from "_macros.jinja" import when %}
 <section class="panel check-history"
          id="events-island"
          hx-get="{{ url_for('watcher.events_island') }}"
@@ -26,9 +27,7 @@
                                    class="check-history__site">{{ snap.site.name }}</a>
                             </td>
                             <td class="check-history__time">
-                                <time data-live datetime="{{ snap.captured_at | to_iso }}">
-                                    {{ snap.captured_at | strftime }}
-                                </time>
+                                {{ when(snap.captured_at) }}
                             </td>
                             <td class="check-history__details">
                                 {% if snap.diff_snippet %}

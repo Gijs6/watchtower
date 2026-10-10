@@ -56,9 +56,9 @@
     font-weight: 700;
 }
 
-.check-history__time {
+.check-history__time,
+.site-cell__time {
     white-space: nowrap;
-    font-variant-numeric: tabular-nums;
 }
 
 .check-history__details {

@@ -1,4 +1,4 @@
-{% from "_macros.jinja" import status_badge %}
+{% from "_macros.jinja" import status_badge, when %}
 <div id="sites-island"
      class="panel"
      hx-get="{{ url_for('watcher.island') }}"
@@ -76,16 +76,12 @@
                                     {% endfor %}
                                 </div>
                             </td>
-                            <td>
-                                <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>
-                            </td>
-                            <td>
-                                <time data-live datetime="{{ site.last_changed_at | to_iso }}">{{ site.last_changed_at | timeago }}</time>
-                            </td>
-                            <td>
+                            <td class="site-cell__time">{{ when(site.last_checked_at) }}</td>
+                            <td class="site-cell__time">{{ when(site.last_changed_at) }}</td>
+                            <td class="site-cell__time">
                                 {% if site.is_active %}
-                                    <time data-live="until" datetime="{{ site.next_check_at | to_iso }}">{{ site.next_check_at | timeuntil }}</time>
-                                {%- else %}paused
+                                    {{ when(site.next_check_at, live="until") }}
+                                {%- else %}Paused
                                 {% endif %}
                             </td>
                             <td class="table__actions">

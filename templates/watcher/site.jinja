@@ -1,6 +1,6 @@
 {% extends "base.jinja" %}
 
-{% from "_macros.jinja" import status_badge %}
+{% from "_macros.jinja" import status_badge, when %}
 
 {% block title %}{{ site.name }}{% endblock %}
 
@@ -10,7 +10,7 @@
     </div>
 
     <p class="site-summary">
-        <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked <time data-live datetime="{{ site.last_checked_at | to_iso }}">{{ site.last_checked_at | timeago }}</time>.
+        <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked {{ when(site.last_checked_at) }}.
     </p>
 
     <div class="form__actions site-actions">

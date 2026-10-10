@@ -1,3 +1,13 @@
+{# djlint:off #}
+{% macro when(value, live="ago") -%}
+    {%- if value is none -%}
+        Never
+    {%- else -%}
+        <time data-live="{{ live }}" datetime="{{ value | to_iso }}">{{ value | strftime }} UTC{% if live == "ago" %} ({{ value | timeago }}){% elif live == "until" %} ({{ value | timeuntil }}){% endif %}</time>
+    {%- endif -%}
+{%- endmacro %}
+{# djlint:on #}
+
 {% macro status_badge(status, in_title=false) -%}
     {%- set tone = {"up": " status--ok", "down": " status--bad"}.get(status, "") -%}
     {%- set label = {"up": "Up", "down": "Down", "paused": "Paused", "pending": "Pending"}[status] -%}

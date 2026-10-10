@@ -1,3 +1,4 @@
+{% from "_macros.jinja" import when %}
 <section class="panel check-history"
          id="history-island"
          hx-get="{{ url_for('watcher.history_island', site_id=site.id) }}"
@@ -37,9 +38,9 @@
                             </td>
                             <td class="check-history__time">
                                 {%- if count > 1 -%}
-                                    {{ oldest.captured_at | strftime }} to {{ snap.captured_at | strftime }}
+                                    {{ when(oldest.captured_at, live="abs") }} to {{ when(snap.captured_at, live="abs") }}
                                 {%- else -%}
-                                    {{ snap.captured_at | strftime }}
+                                    {{ when(snap.captured_at, live="abs") }}
                                 {%- endif -%}
                             </td>
                             <td class="check-history__details">
