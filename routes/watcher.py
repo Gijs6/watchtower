@@ -74,7 +74,7 @@ def add():
     url = request.form.get("url", "").strip()
     interval = request.form.get("check_interval", "300").strip()
     if not url:
-        flash("URL is required.", "error")
+        flash("Enter a URL to add the site.", "error")
         return render_template(
             "watcher/add_site.jinja", name=name, url=url, interval=interval
         )
@@ -98,7 +98,7 @@ def delete(site_id):
     name = site.name
     db.session.delete(site)
     db.session.commit()
-    flash(f"Removed {name}.", "success")
+    flash(f"Deleted {name}.", "success")
     return redirect(url_for("watcher.index"))
 
 

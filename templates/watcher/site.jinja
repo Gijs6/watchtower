@@ -20,8 +20,8 @@
            rel="noopener noreferrer">Visit</a>
         <form method="post"
               action="{{ url_for('watcher.delete', site_id=site.id) }}"
-              onsubmit="return confirm('Remove {{ site.name }}?')">
-            <button type="submit" class="btn btn--danger">Remove</button>
+              onsubmit="return confirm('Delete {{ site.name }}?')">
+            <button type="submit" class="btn btn--danger">Delete site</button>
         </form>
     </div>
 
@@ -47,7 +47,7 @@
                        max="86400" />
             </div>
             <div class="form__actions">
-                <button type="submit" class="btn">Save</button>
+                <button type="submit" class="btn">Save settings</button>
             </div>
         </fieldset>
     </form>
