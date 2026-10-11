@@ -1,9 +1,9 @@
 {% from "_macros.jinja" import status_badge, when %}
-<div id="sites-island"
-     class="panel"
-     hx-get="{{ url_for('watcher.island') }}"
-     hx-trigger="every 10s"
-     hx-swap="outerHTML">
+<section id="sites-island"
+         class="panel"
+         hx-get="{{ url_for('watcher.island') }}"
+         hx-trigger="every 10s"
+         hx-swap="outerHTML">
     <h2 class="panel__heading">
         Sites <a href="{{ url_for('watcher.add_site') }}" class="btn btn--sm">Add site</a>
     </h2>
@@ -100,4 +100,4 @@
             </table>
         </div>
     {% endif %}
-</div>
+</section>
