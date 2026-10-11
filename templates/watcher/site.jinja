@@ -17,7 +17,7 @@
         <a href="{{ site.url }}"
            class="btn"
            target="_blank"
-           rel="noopener noreferrer">Visit</a>
+           rel="noopener noreferrer">Visit site</a>
         <form method="post"
               action="{{ url_for('watcher.delete', site_id=site.id) }}"
               onsubmit="return confirm('Delete {{ site.name }}?')">
