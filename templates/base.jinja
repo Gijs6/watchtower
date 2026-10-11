@@ -12,12 +12,11 @@
     <header class="navbar">
         <div class="navbar__inner">
             <a href="{{ url_for('index') }}" class="navbar__brand">{% include "mark.svg" %}Watchtower</a>
-            <nav class="navbar__links" aria-label="Main navigation">
+            <nav class="navbar__links" aria-label="Main">
                 {{ nav_link('watcher.index', 'Dashboard') }}
 
                 {% call nav_link('watcher.notifications', 'Notifications') %}
                     {% include "watcher/islands/notif_badge.jinja" %}
-
                 {% endcall %}
 
                 {% call nav_link('watcher.settings', 'Settings') %}
