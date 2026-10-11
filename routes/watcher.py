@@ -74,7 +74,7 @@ def add():
     url = request.form.get("url", "").strip()
     interval = request.form.get("check_interval", "300").strip()
     if not url:
-        flash("Enter a URL to add the site.", "error")
+        flash("Enter a URL.", "error")
         return render_template(
             "watcher/add_site.jinja", name=name, url=url, interval=interval
         )
@@ -125,7 +125,7 @@ def update(site_id):
     except ValueError:
         pass
     db.session.commit()
-    flash(f"Updated {site.name}.", "success")
+    flash(f"Saved {site.name}.", "success")
     return redirect(url_for("watcher.detail", site_id=site.id))
 
 
