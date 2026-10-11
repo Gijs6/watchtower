@@ -107,6 +107,7 @@ def toggle(site_id):
     site = db.get_or_404(Site, site_id)
     site.is_active = not site.is_active
     db.session.commit()
+    flash(f"{'Resumed' if site.is_active else 'Paused'} {site.name}.", "success")
     return redirect(url_for("watcher.index"))
 
 
@@ -125,7 +126,7 @@ def update(site_id):
     except ValueError:
         pass
     db.session.commit()
-    flash(f"Saved {site.name}.", "success")
+    flash("Site saved.", "success")
     return redirect(url_for("watcher.detail", site_id=site.id))
 
 

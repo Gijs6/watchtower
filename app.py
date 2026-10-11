@@ -7,6 +7,8 @@ from werkzeug.security import check_password_hash
 from models import db
 from routes import register_routes
 from utils.filters import register_filters
+from utils.toasts import register_toasts
+from utils.version import register_version
 from utils.watcher import start_worker
 
 
@@ -21,6 +23,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 register_filters(app)
 register_routes(app)
+register_toasts(app)
+register_version(app, "radar")
 
 os.makedirs(app.instance_path, exist_ok=True)
 
@@ -49,7 +53,8 @@ def login():
     if request.method == "POST":
         password = request.form.get("password", "")
         stored_hash = os.getenv("PASSWORD_HASH", "")
-        if stored_hash and check_password_hash(stored_hash, password):
+        if app.debug or (stored_hash and check_password_hash(stored_hash, password)):
+            session.clear()
             session["authenticated"] = True
             return redirect(url_for("index"))
         flash("Incorrect password.", "error")
@@ -59,6 +64,8 @@ def login():
 @app.route("/logout", methods=["POST"])
 def logout():
     session.clear()
+    if app.debug:
+        session["dev_signed_out"] = True
     return redirect(url_for("login"))
 
 
@@ -94,6 +101,8 @@ def inject_globals():
 
 @app.before_request
 def require_login():
+    if app.debug and not is_logged_in() and not session.get("dev_signed_out"):
+        session["authenticated"] = True
     allowed = {"login", "logout", "static"}
     if request.endpoint and request.endpoint not in allowed:
         if not is_logged_in():

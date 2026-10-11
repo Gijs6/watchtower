@@ -7,3 +7,4 @@ node_modules
 *.min.js
 *.db
 instance
+VERSION
