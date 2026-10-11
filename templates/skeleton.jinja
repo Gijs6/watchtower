@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <title>{%- block title -%}{%- endblock %} - Watchtower</title>
+        <meta name="description" content="Watches websites for changes." />
+        <meta name="theme-color"
+              content="#c2410c"
+              media="(prefers-color-scheme: light)" />
+        <meta name="theme-color"
+              content="#9a3412"
+              media="(prefers-color-scheme: dark)" />
 
         <link rel="icon"
               href="{{ url_for('static', filename='favicon.svg') }}"
