@@ -19,22 +19,30 @@ def strftime_filter(value, fmt="%-d %b %Y, %H:%M"):
     return value.strftime(fmt)
 
 
+UNITS = (
+    (60, 1, "second"),
+    (3600, 60, "minute"),
+    (86400, 3600, "hour"),
+    (604800, 86400, "day"),
+    (2629800, 604800, "week"),
+    (31557600, 2629800, "month"),
+    (None, 31557600, "year"),
+)
+
+
+def span(secs):
+    for limit, size, unit in UNITS:
+        if limit is None or secs < limit:
+            n = secs // size
+            return f"{n} {unit}" if n == 1 else f"{n} {unit}s"
+
+
 def timeago_filter(value):
     value = ensure_tz(value)
     if value is None:
         return "Never"
     secs = int((datetime.now(timezone.utc) - value).total_seconds())
-    future = secs < 0
-    secs = abs(secs)
-    if secs < 60:
-        span = f"{secs}s"
-    elif secs < 3600:
-        span = f"{secs // 60}m"
-    elif secs < 86400:
-        span = f"{secs // 3600}h"
-    else:
-        span = f"{secs // 86400}d"
-    return f"in {span}" if future else f"{span} ago"
+    return f"in {span(-secs)}" if secs < 0 else f"{span(secs)} ago"
 
 
 def timeuntil_filter(value):
@@ -44,15 +52,7 @@ def timeuntil_filter(value):
     secs = int((value - datetime.now(timezone.utc)).total_seconds())
     if secs <= 0:
         return "due now"
-    if secs < 60:
-        span = f"{secs}s"
-    elif secs < 3600:
-        span = f"{secs // 60}m"
-    elif secs < 86400:
-        span = f"{secs // 3600}h"
-    else:
-        span = f"{secs // 86400}d"
-    return f"in {span}"
+    return f"in {span(secs)}"
 
 
 def to_iso_filter(value):

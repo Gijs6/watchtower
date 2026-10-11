@@ -49,37 +49,31 @@
         {% block body_content %}{% endblock %}
 
         <script>
+            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            function span(s) {
+                const units = [[60, 1, 'second'], [3600, 60, 'minute'], [86400, 3600, 'hour'], [604800, 86400, 'day'], [2629800, 604800, 'week'], [31557600, 2629800, 'month'], [Infinity, 31557600, 'year']];
+                for (const [limit, size, unit] of units) {
+                    if (s < limit) {
+                        const n = Math.floor(s / size);
+                        return n + ' ' + unit + (n === 1 ? '' : 's');
+                    }
+                }
+            }
+
             function timeago(dt) {
-                let s = Math.floor((Date.now() - dt) / 1000);
-                const future = s < 0;
-                s = Math.abs(s);
-                let span;
-                if (s < 60) span = s + 's';
-                else if (s < 3600) span = Math.floor(s / 60) + 'm';
-                else if (s < 86400) span = Math.floor(s / 3600) + 'h';
-                else span = Math.floor(s / 86400) + 'd';
-                return future ? 'in ' + span : span + ' ago';
+                const s = Math.floor((Date.now() - dt) / 1000);
+                return s < 0 ? 'in ' + span(-s) : span(s) + ' ago';
             }
 
             function timeuntil(dt) {
-                let s = Math.floor((dt - Date.now()) / 1000);
-                if (s <= 0) return 'due now';
-                let span;
-                if (s < 60) span = s + 's';
-                else if (s < 3600) span = Math.floor(s / 60) + 'm';
-                else if (s < 86400) span = Math.floor(s / 3600) + 'h';
-                else span = Math.floor(s / 86400) + 'd';
-                return 'in ' + span;
+                const s = Math.floor((dt - Date.now()) / 1000);
+                return s <= 0 ? 'due now' : 'in ' + span(s);
             }
 
             function absolute(dt) {
-                return dt.toLocaleString('en-GB', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+                const pad = (n) => String(n).padStart(2, '0');
+                return dt.getDate() + ' ' + MONTHS[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + pad(dt.getHours()) + ':' + pad(dt.getMinutes());
             }
 
             function updateLiveTimes() {
