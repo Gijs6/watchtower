@@ -43,7 +43,7 @@
                                 {% if site.last_changed_at and site.last_changed_at | is_recent %}<small class="site-cell__flag">Changed {{ site.last_changed_at | timeago }}</small>{% endif %}
                             </td>
                             <td>
-                                <div class="timeline" aria-label="Last 24 hours">
+                                <div class="timeline" role="img" aria-label="Last 24 hours">
                                     {% for bucket in timeline[site.id] %}
                                         {% set h_near = 23 - loop.index0 %}
                                         {% set h_far = 24 - loop.index0 %}
