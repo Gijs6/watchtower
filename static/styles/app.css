@@ -3,10 +3,6 @@
     color: var(--on-nav);
 }
 
-.site-summary {
-    margin-block-end: var(--space-xl);
-}
-
 .site-actions {
     margin-block-end: var(--space-2xl);
 }

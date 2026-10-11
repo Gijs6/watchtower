@@ -6,12 +6,13 @@
 
 {% block content %}
     <div class="page-head">
-        <h1>{{ site.name }} {{ status_badge(status, in_title=true) }}</h1>
+        <div>
+            <h1>{{ site.name }} {{ status_badge(status, in_title=true) }}</h1>
+            <p class="page-head__sub">
+                <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked {{ when(site.last_checked_at) }}.
+            </p>
+        </div>
     </div>
-
-    <p class="site-summary">
-        <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked {{ when(site.last_checked_at) }}.
-    </p>
 
     <div class="form__actions site-actions">
         <a href="{{ site.url }}"
