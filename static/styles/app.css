@@ -133,3 +133,7 @@
 .status--title {
     font-weight: inherit;
 }
+
+.notif-badge:not(:has(span)) {
+    display: none;
+}
