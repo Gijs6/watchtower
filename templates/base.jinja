@@ -22,7 +22,9 @@
                 {% call nav_link('watcher.settings', 'Settings') %}
                     {% if not discord_webhook_set %}
                         <span class="nav-warn tooltip"
-                              data-tooltip="No Discord webhook set, notifications will not be sent">!</span>
+                              data-tooltip="No Discord webhook set, notifications won't be sent"
+                              aria-hidden="true">!</span>
+                        <span class="visually-hidden">(no Discord webhook set)</span>
                     {% endif %}
                 {% endcall %}
 

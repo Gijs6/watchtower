@@ -8,9 +8,9 @@
     </div>
 
     {% if not discord_webhook_set %}
-        <div class="alert alert--warning">
-            No Discord webhook set, notifications will not be sent. <a href="{{ url_for('watcher.settings') }}">Set one in settings</a>.
-        </div>
+        <p class="alert alert--warning">
+            No Discord webhook set, notifications won't be sent. <a href="{{ url_for('watcher.settings') }}">Set one in settings</a>.
+        </p>
     {% endif %}
 
     {% include "watcher/islands/sites.jinja" %}
