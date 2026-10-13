@@ -16,10 +16,16 @@
                 <tr>
                     <th scope="row">URL</th>
                     <td><a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a></td>
+                </tr>
+                <tr>
                     <th scope="row">Checked every</th>
                     <td>{{ site.check_interval | duration }}</td>
+                </tr>
+                <tr>
                     <th scope="row">Last checked</th>
                     <td>{{ when(site.last_checked_at) }}</td>
+                </tr>
+                <tr>
                     <th scope="row">Last change</th>
                     <td>{{ when(site.last_changed_at) }}</td>
                 </tr>
