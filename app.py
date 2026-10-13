@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash
 from models import db
 from routes import register_routes
 from utils.filters import register_filters
-from utils.toasts import register_toasts
+from utils.toasts import htmx_redirect, register_toasts
 from utils.version import register_version
 from utils.watcher import start_worker
 
@@ -106,7 +106,7 @@ def require_login():
     allowed = {"login", "logout", "static"}
     if request.endpoint and request.endpoint not in allowed:
         if not is_logged_in():
-            return redirect(url_for("login"))
+            return htmx_redirect(url_for("login"))
 
 
 @app.errorhandler(404)
