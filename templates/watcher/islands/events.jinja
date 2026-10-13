@@ -4,6 +4,7 @@
          hx-get="{{ url_for('watcher.events_island') }}"
          hx-trigger="every 30s"
          hx-swap="outerHTML">
+    <h2 class="panel__heading">Changes</h2>
     {% if not events %}
         <div class="empty">
             <p class="empty__title">No changes detected yet</p>

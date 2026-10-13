@@ -25,20 +25,18 @@
                         <tr>
                             <td>
                                 {% if snap.outcome == "error" %}
-                                    <span class="status status--warn">Error
-                                        {% if count > 1 %}&times;{{ count }}{% endif %}
-                                    </span>
+                                    <span class="status status--warn">Error</span>
+                                    {% if count > 1 %}<span class="count">{{ "{:,}".format(count) }}</span>{% endif %}
                                 {% elif snap.outcome == "changed" %}
                                     <span class="status status--bad">Changed</span>
                                 {% else %}
-                                    <span class="status status--ok">No change
-                                        {% if count > 1 %}&times;{{ count }}{% endif %}
-                                    </span>
+                                    <span class="status status--ok">No change</span>
+                                    {% if count > 1 %}<span class="count">{{ "{:,}".format(count) }}</span>{% endif %}
                                 {% endif %}
                             </td>
                             <td class="check-history__time">
                                 {%- if count > 1 -%}
-                                    {{ when(oldest.captured_at, live="abs") }} to {{ when(snap.captured_at, live="abs") }}
+                                    {{ when(oldest.captured_at, live="abs") }} → {{ when(snap.captured_at, live="abs") }}
                                 {%- else -%}
                                     {{ when(snap.captured_at, live="abs") }}
                                 {%- endif -%}

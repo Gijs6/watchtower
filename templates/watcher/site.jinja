@@ -6,19 +6,28 @@
 
 {% block content %}
     <div class="page-head">
-        <div>
-            <h1>{{ site.name }} {{ status_badge(status, in_title=true) }}</h1>
-            <p class="page-head__sub">
-                <a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a>, checked every {{ site.check_interval }} seconds, last checked {{ when(site.last_checked_at) }}.
-            </p>
-        </div>
+        <h1>{{ site.name }} {{ status_badge(status, in_title=true) }}</h1>
     </div>
 
-    <div class="form__actions site-actions">
-        <a href="{{ site.url }}"
-           class="btn"
-           target="_blank"
-           rel="noopener noreferrer">Visit site</a>
+    <div class="table-wrap">
+        <table class="table table--kv table--fit">
+            <caption class="visually-hidden">Details</caption>
+            <tbody>
+                <tr>
+                    <th scope="row">URL</th>
+                    <td><a href="{{ site.url }}" target="_blank" rel="noopener noreferrer">{{ site.url }}</a></td>
+                    <th scope="row">Checked every</th>
+                    <td>{{ site.check_interval | duration }}</td>
+                    <th scope="row">Last checked</th>
+                    <td>{{ when(site.last_checked_at) }}</td>
+                    <th scope="row">Last change</th>
+                    <td>{{ when(site.last_changed_at) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="page-actions">
         <form method="post"
               action="{{ url_for('watcher.delete', site_id=site.id) }}"
               data-confirm="Delete {{ site.name }}?">

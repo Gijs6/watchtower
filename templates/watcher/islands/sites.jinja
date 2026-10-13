@@ -19,9 +19,7 @@
                         <th>Site</th>
                         <th>Status</th>
                         <th>Last 24 hours</th>
-                        <th>Checked</th>
-                        <th>Changed</th>
-                        <th>Next check</th>
+                        <th>Last change</th>
                         <th class="table__actions">
                             <span class="visually-hidden">Actions</span>
                         </th>
@@ -34,13 +32,20 @@
                                 <a href="{{ url_for('watcher.detail', site_id=site.id) }}"
                                    class="site-cell__name">{{ site.name }}</a>
                                 <a href="{{ site.url }}"
-                                   class="site-cell__url"
+                                   class="table__sub site-cell__url"
                                    target="_blank"
                                    rel="noopener noreferrer">{{ site.url }}</a>
                             </td>
                             <td>
                                 {{ status_badge(status[site.id]) }}
-                                {% if site.last_changed_at and site.last_changed_at | is_recent %}<small class="site-cell__flag">Changed {{ site.last_changed_at | timeago }}</small>{% endif %}
+                                <span class="table__sub">
+                                    {%- if site.last_checked_at -%}
+                                        checked {{ site.last_checked_at | strftime("%H:%M" if site.last_checked_at | is_recent(24) else "%-d %b %Y, %H:%M") }}
+                                    {%- else -%}
+                                        not checked yet
+                                    {%- endif -%}
+                                    {%- if site.is_active and site.next_check_at %}, next {{ site.next_check_at | strftime("%H:%M") }}{% endif %} UTC
+                                </span>
                             </td>
                             <td>
                                 <div class="timeline" role="img" aria-label="Last 24 hours">
@@ -75,14 +80,7 @@
                                     {% endfor %}
                                 </div>
                             </td>
-                            <td class="site-cell__time">{{ when(site.last_checked_at) }}</td>
                             <td class="site-cell__time">{{ when(site.last_changed_at) }}</td>
-                            <td class="site-cell__time">
-                                {% if site.is_active %}
-                                    {{ when(site.next_check_at, live="until") }}
-                                {%- else %}Paused
-                                {% endif %}
-                            </td>
                             <td class="table__actions">
                                 <form method="post"
                                       action="{{ url_for('watcher.toggle', site_id=site.id) }}">

@@ -12,7 +12,7 @@
     {%- set tone = {"up": " status--ok", "down": " status--bad"}.get(status, "") -%}
     {%- set label = {"up": "Up", "down": "Down", "paused": "Paused", "pending": "Pending"}[status] -%}
     {%- if in_title -%}
-        <span class="status status--title{{ tone }}">({{ label | lower }})</span>
+        <span class="status{{ tone }}">({{ label | lower }})</span>
     {%- else -%}
         <span class="status{{ tone }}">{{ label }}</span>
     {%- endif -%}

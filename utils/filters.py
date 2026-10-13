@@ -37,6 +37,21 @@ def span(secs):
             return f"{n} {unit}" if n == 1 else f"{n} {unit}s"
 
 
+def duration_filter(seconds):
+    parts = []
+    for size, unit in ((3600, "hour"), (60, "minute"), (1, "second")):
+        n, seconds = divmod(seconds, size)
+        if n:
+            parts.append(f"{n} {unit}" if n == 1 else f"{n} {unit}s")
+    if parts == ["1 hour"] or parts == ["1 minute"]:
+        return parts[0][2:]
+    return (
+        " and ".join(parts)
+        if len(parts) < 3
+        else f"{parts[0]}, {parts[1]} and {parts[2]}"
+    )
+
+
 def timeago_filter(value):
     value = ensure_tz(value)
     if value is None:
@@ -121,6 +136,7 @@ def diff_html_filter(diff_text):
 
 FILTERS = {
     "strftime": strftime_filter,
+    "duration": duration_filter,
     "timeago": timeago_filter,
     "timeuntil": timeuntil_filter,
     "to_iso": to_iso_filter,
