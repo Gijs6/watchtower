@@ -16,7 +16,7 @@
 
         <form method="POST" action="{{ url_for('login') }}">
             {% if config.DEBUG %}
-                <p class="muted">Dev mode, so no password is needed.</p>
+                <p class="muted">Dev login</p>
             {% else %}
                 <div class="field">
                     <label class="field__label" for="password">Password</label>
