@@ -3,28 +3,16 @@
     color: var(--on-nav);
 }
 
-.site-actions {
-    margin-block-end: var(--space-2xl);
-}
-
 .site-cell__name {
     display: block;
     font-weight: 700;
 }
 
 .site-cell__url {
-    display: block;
     max-inline-size: 16rem;
     overflow: hidden;
-    font-size: 12px;
-    color: var(--muted);
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-
-.site-cell__flag {
-    display: block;
-    color: var(--bad);
 }
 
 .timeline {
@@ -62,7 +50,7 @@
 }
 
 .check-history__error {
-    font-size: 12px;
+    font-size: var(--text-sm);
     overflow-wrap: anywhere;
 }
 
@@ -83,7 +71,7 @@
 .diff {
     overflow: hidden;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: var(--text-sm);
     line-height: 1.45;
     border: 1px solid var(--rule);
 }
@@ -124,10 +112,6 @@
 
 .notif-badge {
     display: contents;
-}
-
-.status--title {
-    font-weight: inherit;
 }
 
 .notif-badge:not(:has(span)) {
