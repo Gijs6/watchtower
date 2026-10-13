@@ -71,9 +71,14 @@
                 return s <= 0 ? 'due now' : 'in ' + span(s);
             }
 
+            const pad = (n) => String(n).padStart(2, '0');
+
+            function clock(dt) {
+                return pad(dt.getHours()) + ':' + pad(dt.getMinutes());
+            }
+
             function absolute(dt) {
-                const pad = (n) => String(n).padStart(2, '0');
-                return dt.getDate() + ' ' + MONTHS[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + pad(dt.getHours()) + ':' + pad(dt.getMinutes());
+                return dt.getDate() + ' ' + MONTHS[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + clock(dt);
             }
 
             function updateLiveTimes() {
@@ -82,6 +87,7 @@
                     if (isNaN(dt)) return;
                     const mode = el.dataset.live;
                     if (mode === 'abs') el.textContent = absolute(dt);
+                    else if (mode === 'clock') el.textContent = Date.now() - dt < 86400000 && dt - Date.now() < 86400000 ? clock(dt) : absolute(dt);
                     else if (mode === 'until') el.textContent = absolute(dt) + ' (' + timeuntil(dt) + ')';
                     else el.textContent = absolute(dt) + ' (' + timeago(dt) + ')';
                 });
