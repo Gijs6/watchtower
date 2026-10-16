@@ -8,5 +8,8 @@
     },
     "devDependencies": {
         "lightningcss-cli": "^1"
+    },
+    "allowScripts": {
+        "lightningcss-cli@1.33.0": true
     }
 }
