@@ -3,12 +3,12 @@
     {%- if value is none -%}
         Never
     {%- else -%}
-        <time data-live="{{ live }}" datetime="{{ value | to_iso }}">{{ value | strftime }} UTC{% if live == "ago" %} ({{ value | timeago }}){% elif live == "until" %} ({{ value | timeuntil }}){% endif %}</time>
+        <time datetime="{{ value | to_iso }}">{{ value | strftime }}</time>{% if live == "ago" %} (<time datetime="{{ value | to_iso }}" data-live="ago">{{ value | timeago }}</time>){% elif live == "until" %} (<time datetime="{{ value | to_iso }}" data-live="until">{{ value | timeuntil }}</time>){% endif %}
     {%- endif -%}
 {%- endmacro %}
 
 {% macro clock(value) -%}
-    <time data-live="clock" datetime="{{ value | to_iso }}">{{ value | strftime("%H:%M" if value | is_recent(24) else "%-d %b %Y, %H:%M") }} UTC</time>
+    <time datetime="{{ value | to_iso }}">{{ value | strftime("%H:%M" if value | is_recent(24) else "%-d %b %Y, %H:%M") }}</time>
 {%- endmacro %}
 {# djlint:on #}
 

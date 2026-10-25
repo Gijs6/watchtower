@@ -1,8 +1,10 @@
 import requests
 
+from utils.filters import strftime_filter
+
 
 def send_notification(webhook_url, site, detected_at, diff_snippet):
-    timestamp = detected_at.strftime("%Y-%m-%d %H:%M:%S UTC")
+    timestamp = strftime_filter(detected_at)
 
     embed = {
         "title": f"Change detected: {site.name}",
