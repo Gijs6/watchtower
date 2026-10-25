@@ -11,12 +11,16 @@
 {% block body_content %}
     <header class="navbar">
         <div class="navbar__inner">
-            <a href="{{ url_for('index') }}" class="navbar__brand">{% include "mark.svg" %}Watchtower</a>
+            <a href="{{ url_for('index') }}" class="navbar__brand">
+                {% include "mark.svg" %}
+
+            Watchtower</a>
             <nav class="navbar__links" aria-label="Main">
                 {{ nav_link('watcher.index', 'Dashboard') }}
 
                 {% call nav_link('watcher.notifications', 'Notifications') %}
                     {% include "watcher/islands/notif_badge.jinja" %}
+
                 {% endcall %}
 
                 {% call nav_link('watcher.settings', 'Settings') %}
@@ -28,7 +32,7 @@
                     {% endif %}
                 {% endcall %}
 
-                <form method="post" action="{{ url_for('logout') }}">
+                <form method="post" action="{{ url_for('auth.logout') }}">
                     <button type="submit">Sign out</button>
                 </form>
             </nav>

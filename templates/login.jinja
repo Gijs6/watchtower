@@ -5,7 +5,10 @@
 {% block body_content %}
     <header class="navbar">
         <div class="navbar__inner">
-            <a href="{{ url_for('index') }}" class="navbar__brand">{% include "mark.svg" %}Watchtower</a>
+            <a href="{{ url_for('index') }}" class="navbar__brand">
+                {% include "mark.svg" %}
+
+            Watchtower</a>
         </div>
     </header>
 
@@ -14,7 +17,8 @@
             <h1>Sign in</h1>
         </div>
 
-        <form method="POST" action="{{ url_for('login') }}">
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="next" value="{{ next_url }}" />
             {% if config.DEBUG %}
                 <p class="muted">Dev login</p>
             {% else %}

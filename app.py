@@ -1,13 +1,15 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, session, url_for
-from werkzeug.security import check_password_hash
+from flask import Flask, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from models import db
 from routes import register_routes
+from utils.auth import init_auth
+from utils.errors import register_errors
 from utils.filters import register_filters
-from utils.toasts import htmx_redirect, register_toasts
+from utils.toasts import register_toasts
 from utils.version import register_version
 from utils.watcher import start_worker
 
@@ -15,16 +17,19 @@ from utils.watcher import start_worker
 load_dotenv(override=True)
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(100).hex())
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", "sqlite:///watchtower.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+init_auth(app)
 register_filters(app)
 register_routes(app)
 register_toasts(app)
 register_version(app, "radar")
+register_errors(app, "radar")
 
 os.makedirs(app.instance_path, exist_ok=True)
 
@@ -35,38 +40,7 @@ if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
     start_worker(app)
 
 
-def is_logged_in():
-    return session.get("authenticated") is True
-
-
-@app.route("/")
-def index():
-    if not is_logged_in():
-        return redirect(url_for("login"))
-    return redirect(url_for("watcher.index"))
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if is_logged_in():
-        return redirect(url_for("index"))
-    if request.method == "POST":
-        password = request.form.get("password", "")
-        stored_hash = os.getenv("PASSWORD_HASH", "")
-        if app.debug or (stored_hash and check_password_hash(stored_hash, password)):
-            session.clear()
-            session["authenticated"] = True
-            return redirect(url_for("index"))
-        flash("Incorrect password.", "error")
-    return render_template("login.jinja")
-
-
-@app.route("/logout", methods=["POST"])
-def logout():
-    session.clear()
-    if app.debug:
-        session["dev_signed_out"] = True
-    return redirect(url_for("login"))
+app.add_url_rule("/", "index", app.view_functions["watcher.index"])
 
 
 @app.context_processor
@@ -99,14 +73,14 @@ def inject_globals():
     }
 
 
-@app.before_request
-def require_login():
-    if app.debug and not is_logged_in() and not session.get("dev_signed_out"):
-        session["authenticated"] = True
-    allowed = {"login", "logout", "static"}
-    if request.endpoint and request.endpoint not in allowed:
-        if not is_logged_in():
-            return htmx_redirect(url_for("login"))
+@app.errorhandler(403)
+def forbidden(_e):
+    return render_template(
+        "error.jinja",
+        code=403,
+        title="Forbidden",
+        description="You don't have permission to view this page.",
+    ), 403
 
 
 @app.errorhandler(404)

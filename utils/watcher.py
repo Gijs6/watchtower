@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from models import Setting, Site, Snapshot, db
+from utils.errors import report
 
 
 worker_thread = None
@@ -173,7 +174,7 @@ def run_worker(app):
                     ):
                         do_check(site)
         except Exception as e:
-            print(f"Worker error: {e}")
+            report(e, kind="task")
         time.sleep(CHECK_LOOP_INTERVAL)
 
 

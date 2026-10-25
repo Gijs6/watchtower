@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from utils.watcher import get_setting, set_setting
 
 
-watcher_bp = Blueprint("watcher", __name__, url_prefix="/watcher")
+watcher_bp = Blueprint("watcher", __name__)
 
 TIMELINE_HOURS = 24
 
