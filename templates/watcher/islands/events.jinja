@@ -2,7 +2,8 @@
 <section class="panel check-history"
          id="events-island"
          hx-get="{{ url_for('watcher.events_island') }}"
-         hx-trigger="every 30s [!this.querySelector('details[open]')]"
+         hx-trigger="every 30s"
+         data-pause-when-open
          hx-swap="outerHTML">
     <h2 class="panel__heading">Changes</h2>
     {% if not events %}

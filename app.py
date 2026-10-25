@@ -2,13 +2,14 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, render_template
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 from models import db
 from routes import register_routes
 from utils.auth import init_auth
 from utils.errors import register_errors
 from utils.filters import register_filters
+from utils.headers import register_headers
+from utils.proxy import TrustedProxyFix
 from utils.toasts import register_toasts
 from utils.version import register_version
 from utils.watcher import start_worker
@@ -17,7 +18,10 @@ from utils.watcher import start_worker
 load_dotenv(override=True)
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.jinja_env.autoescape = True
+app.wsgi_app = TrustedProxyFix(
+    app.wsgi_app, os.getenv("TRUSTED_PROXIES", "router").split(",")
+)
 
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(100).hex())
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", "sqlite:///watchtower.db")
@@ -32,6 +36,7 @@ register_routes(app)
 register_toasts(app)
 register_version(app, "radar")
 register_errors(app, "radar")
+register_headers(app)
 
 os.makedirs(app.instance_path, exist_ok=True)
 

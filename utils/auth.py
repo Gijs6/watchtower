@@ -1,8 +1,10 @@
+import ipaddress
 import os
 import time
 from datetime import timedelta
 from urllib.parse import urlsplit, urlunsplit
 
+import requests
 from authlib.integrations.flask_client import OAuth, OAuthError
 from flask import (
     Blueprint,
@@ -21,6 +23,8 @@ from utils.toasts import htmx_redirect
 
 auth_bp = Blueprint("auth", __name__)
 oauth = OAuth()
+
+RECHECK_EVERY = timedelta(minutes=10)
 
 
 def provider():
@@ -46,6 +50,14 @@ def session_age():
     return timedelta(seconds=time.time() - signed_in_at)
 
 
+def dev_login():
+    try:
+        ip = ipaddress.ip_address(request.remote_addr or "")
+    except ValueError:
+        return False
+    return current_app.debug and ip.is_loopback
+
+
 def is_logged_in():
     if session.get("authenticated") is not True:
         return False
@@ -55,15 +67,39 @@ def is_logged_in():
     return age is not None and age < current_app.config["OIDC_SESSION_LIFETIME"]
 
 
-def sign_in(user=None, id_token=None):
+def still_signed_in():
+    if provider() != "oidc" or dev_login():
+        return True
+    if time.time() - session.get("checked_at", 0) < RECHECK_EVERY.total_seconds():
+        return True
+    endpoint = oauth.oidc.load_server_metadata().get("userinfo_endpoint")
+    try:
+        response = requests.get(
+            endpoint,
+            headers={"Authorization": f"Bearer {session.get('access_token', '')}"},
+            timeout=5,
+        )
+    except requests.RequestException as error:
+        current_app.logger.warning("Couldn't reach the OIDC provider: %s", error)
+        return True
+    if response.status_code in (401, 403):
+        return False
+    session["checked_at"] = time.time()
+    return True
+
+
+def sign_in(user=None, id_token=None, access_token=None):
     session.clear()
     session.permanent = True
     session["authenticated"] = True
     session["signed_in_at"] = time.time()
+    session["checked_at"] = time.time()
     if user:
         session["user"] = user
     if id_token:
         session["id_token"] = id_token
+    if access_token:
+        session["access_token"] = access_token
 
 
 def same_host_path(url):
@@ -92,7 +128,7 @@ def check_password(form):
 
 def require_login():
     if (
-        current_app.debug
+        dev_login()
         and provider() == "password"
         and not is_logged_in()
         and not session.get("dev_signed_out")
@@ -111,6 +147,9 @@ def require_login():
         return None
     if not is_logged_in():
         return htmx_redirect(login_url())
+    if not still_signed_in():
+        session.clear()
+        return htmx_redirect(login_url())
     return None
 
 
@@ -125,7 +164,7 @@ def login():
     if is_logged_in():
         return redirect(next_url)
     if request.method == "POST":
-        if current_app.debug or current_app.extensions["auth_check"](request.form):
+        if dev_login() or current_app.extensions["auth_check"](request.form):
             sign_in()
             return redirect(next_url)
         if "code" in request.form:
@@ -150,7 +189,7 @@ def callback():
     if not user or str(user) not in current_app.config["OIDC_ALLOWED_USERS"]:
         current_app.logger.warning("OIDC user %r isn't allowed", user)
         abort(403)
-    sign_in(str(user), token.get("id_token"))
+    sign_in(str(user), token.get("id_token"), token.get("access_token"))
     return redirect(next_url)
 
 
