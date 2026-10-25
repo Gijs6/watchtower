@@ -32,9 +32,11 @@
                     {% endif %}
                 {% endcall %}
 
-                <form method="post" action="{{ url_for('auth.logout') }}">
-                    <button type="submit">Sign out</button>
-                </form>
+                {% if auth_provider == "password" %}
+                    <form method="post" action="{{ url_for('auth.logout') }}">
+                        <button type="submit">Sign out</button>
+                    </form>
+                {% endif %}
             </nav>
         </div>
     </header>

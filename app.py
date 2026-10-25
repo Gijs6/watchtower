@@ -22,6 +22,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(100).hex())
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI", "sqlite:///watchtower.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = True
 
 db.init_app(app)
 init_auth(app)
@@ -104,4 +106,5 @@ def server_error(_e):
 
 
 if __name__ == "__main__":
+    app.config["SESSION_COOKIE_SECURE"] = False
     app.run(host="0.0.0.0", port=4000, debug=True)

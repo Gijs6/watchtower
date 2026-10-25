@@ -19,14 +19,16 @@ from werkzeug.security import check_password_hash
 
 from utils.toasts import htmx_redirect
 
-GRACE = timedelta(days=2)
-
 auth_bp = Blueprint("auth", __name__)
 oauth = OAuth()
 
 
 def provider():
     return current_app.config["AUTH_PROVIDER"]
+
+
+def home_url(**kwargs):
+    return url_for(current_app.config["AUTH_HOME"], **kwargs)
 
 
 def local_target(target):
@@ -50,15 +52,7 @@ def is_logged_in():
     if provider() == "password":
         return True
     age = session_age()
-    return age is not None and age < GRACE
-
-
-def needs_renewal():
-    if provider() == "password":
-        return False
-    if request.method != "GET" or request.headers.get("HX-Request"):
-        return False
-    return session_age() > current_app.config["OIDC_SESSION_LIFETIME"]
+    return age is not None and age < current_app.config["OIDC_SESSION_LIFETIME"]
 
 
 def sign_in(user=None, id_token=None):
@@ -72,15 +66,28 @@ def sign_in(user=None, id_token=None):
         session["id_token"] = id_token
 
 
+def same_host_path(url):
+    parts = urlsplit(url)
+    if parts.netloc != request.host:
+        return None
+    return urlunsplit(("", "", parts.path, parts.query, ""))
+
+
 def login_url():
-    target = None
     if request.headers.get("HX-Request"):
-        current = urlsplit(request.headers.get("HX-Current-URL", ""))
-        if current.netloc == request.host:
-            target = urlunsplit(("", "", current.path, current.query, ""))
+        target = same_host_path(request.headers.get("HX-Current-URL", ""))
     elif request.method == "GET":
         target = request.full_path.rstrip("?")
+    else:
+        target = same_host_path(request.headers.get("Referer", ""))
     return url_for("auth.login", next=target)
+
+
+def check_password(form):
+    stored_hash = os.getenv("PASSWORD_HASH", "")
+    return bool(stored_hash) and check_password_hash(
+        stored_hash, form.get("password", "")
+    )
 
 
 def require_login():
@@ -91,32 +98,40 @@ def require_login():
         and not session.get("dev_signed_out")
     ):
         sign_in()
-    if request.endpoint in ("auth.login", "auth.callback", "auth.logout", "static"):
+    endpoint = request.endpoint
+    if (
+        endpoint is None
+        or endpoint == "static"
+        or endpoint.startswith("auth.")
+        or endpoint in current_app.config["AUTH_PUBLIC"]
+    ):
         return None
-    if not is_logged_in() or needs_renewal():
+    scope = current_app.config["AUTH_SCOPE"]
+    if scope and request.blueprint != scope:
+        return None
+    if not is_logged_in():
         return htmx_redirect(login_url())
     return None
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    next_url = local_target(request.values.get("next")) or url_for("index")
+    next_url = local_target(request.values.get("next")) or home_url()
     if provider() == "oidc":
-        if is_logged_in() and not needs_renewal():
+        if is_logged_in():
             return redirect(next_url)
         session["next"] = next_url
         return oauth.oidc.authorize_redirect(url_for("auth.callback", _external=True))
     if is_logged_in():
         return redirect(next_url)
     if request.method == "POST":
-        stored_hash = os.getenv("PASSWORD_HASH", "")
-        password = request.form.get("password", "")
-        if current_app.debug or (
-            stored_hash and check_password_hash(stored_hash, password)
-        ):
+        if current_app.debug or current_app.extensions["auth_check"](request.form):
             sign_in()
             return redirect(next_url)
-        flash("Incorrect password.", "error")
+        if "code" in request.form:
+            flash("Incorrect password or code.", "error")
+        else:
+            flash("Incorrect password.", "error")
     return render_template("login.jinja", next_url=next_url)
 
 
@@ -124,7 +139,7 @@ def login():
 def callback():
     if provider() != "oidc":
         abort(404)
-    next_url = session.get("next") or url_for("index")
+    next_url = session.get("next") or home_url()
     try:
         token = oauth.oidc.authorize_access_token()
     except OAuthError as error:
@@ -149,18 +164,22 @@ def logout():
         metadata = oauth.oidc.load_server_metadata()
         if metadata.get("end_session_endpoint"):
             return oauth.oidc.logout_redirect(
-                post_logout_redirect_uri=url_for("index", _external=True),
+                post_logout_redirect_uri=home_url(_external=True),
                 id_token_hint=id_token,
                 client_id=oauth.oidc.client_id,
             )
     return redirect(url_for("auth.login"))
 
 
-def init_auth(app):
+def init_auth(app, home="index", public=(), scope=None, check=None):
     auth_provider = os.getenv("AUTH_PROVIDER", "password")
     if auth_provider not in ("password", "oidc"):
         raise RuntimeError("AUTH_PROVIDER must be 'password' or 'oidc'")
     app.config["AUTH_PROVIDER"] = auth_provider
+    app.config["AUTH_HOME"] = home
+    app.config["AUTH_PUBLIC"] = set(public)
+    app.config["AUTH_SCOPE"] = scope
+    app.extensions["auth_check"] = check or check_password
     if auth_provider == "oidc":
         issuer = os.getenv("OIDC_ISSUER", "").rstrip("/")
         client_id = os.getenv("OIDC_CLIENT_ID", "")
@@ -172,7 +191,7 @@ def init_auth(app):
         app.config["OIDC_SESSION_LIFETIME"] = timedelta(
             minutes=int(os.getenv("OIDC_SESSION_MINUTES", "60"))
         )
-        app.config["PERMANENT_SESSION_LIFETIME"] = GRACE
+        app.config["PERMANENT_SESSION_LIFETIME"] = app.config["OIDC_SESSION_LIFETIME"]
         client_secret = os.getenv("OIDC_CLIENT_SECRET") or None
         oauth.init_app(app)
         oauth.register(
@@ -188,6 +207,6 @@ def init_auth(app):
                 ),
             },
         )
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix=f"/{scope}" if scope else None)
     app.before_request(require_login)
     app.jinja_env.globals["auth_provider"] = auth_provider
